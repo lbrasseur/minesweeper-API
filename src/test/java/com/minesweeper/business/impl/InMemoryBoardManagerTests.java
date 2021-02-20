@@ -1,6 +1,5 @@
 package com.minesweeper.business.impl;
 
-import com.google.gson.GsonBuilder;
 import com.minesweeper.business.api.Board;
 import com.minesweeper.business.api.BoardManager;
 import com.minesweeper.business.api.IdGenerator;
