@@ -23,10 +23,10 @@ public class BoardDto {
         int columnCount = cells[0].length;
         checkArgument(columnCount > 0, "Cell columns must be greater than 0");
         for (CellDto[] row : cells) {
-            requireNonNull(row, "Cell rows can't be null");
-            checkArgument(row.length == columnCount, "All the rows bust have the same column count");
+            requireNonNull(row, "A cell row can't be null");
+            checkArgument(row.length == columnCount, "All the rows must have the same column count");
             for (CellDto cell : row) {
-                requireNonNull(cell, "Cells can't be null");
+                requireNonNull(cell, "A cell can't be null");
             }
         }
 
