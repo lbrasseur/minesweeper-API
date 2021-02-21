@@ -1,5 +1,7 @@
 package com.minesweeper.common.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.minesweeper.business.api.CellState;
 
 import javax.annotation.Nonnull;
@@ -11,8 +13,9 @@ public class CellDto {
     private final CellState state;
     private final boolean hasMine;
 
-    public CellDto(@Nonnull CellState state,
-                   boolean hasMine) {
+    @JsonCreator
+    public CellDto(@JsonProperty("state") @Nonnull CellState state,
+                   @JsonProperty("hasMine") boolean hasMine) {
         this.state = requireNonNull(state, "State can't be null");
         this.hasMine = hasMine;
     }

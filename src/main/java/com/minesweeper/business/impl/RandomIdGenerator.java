@@ -2,11 +2,13 @@ package com.minesweeper.business.impl;
 
 import com.google.common.hash.Hashing;
 import com.minesweeper.business.api.IdGenerator;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
+@Component
 public class RandomIdGenerator implements IdGenerator {
     @Nonnull
     @Override

@@ -1,5 +1,8 @@
 package com.minesweeper.common.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.annotation.Nonnull;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -13,9 +16,10 @@ public class BoardDto {
     @Nonnull
     private final CellDto[][] cells;
 
-    public BoardDto(@Nonnull String id,
-                    @Nonnull String owner,
-                    @Nonnull CellDto[][] cells) {
+    @JsonCreator
+    public BoardDto(@JsonProperty("id") @Nonnull String id,
+                    @JsonProperty("owner") @Nonnull String owner,
+                    @JsonProperty("cells") @Nonnull CellDto[][] cells) {
         requireNonNull(id, "Id can't be null");
         requireNonNull(owner, "Owner can't be null");
         requireNonNull(cells, "Cells can't be null");

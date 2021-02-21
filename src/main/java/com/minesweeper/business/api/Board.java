@@ -1,5 +1,7 @@
 package com.minesweeper.business.api;
 
+import com.minesweeper.common.api.dto.BoardDto;
+
 import javax.annotation.Nonnull;
 
 public interface Board {
@@ -17,4 +19,6 @@ public interface Board {
 
     @Nonnull
     BoardState getState();
+
+    BoardDto toDto();
 }

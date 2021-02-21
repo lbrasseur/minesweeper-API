@@ -108,8 +108,29 @@ public class InMemoryBoard
     }
 
     @Override
+    public BoardDto toDto() {
+        int width = getWidth();
+        int height = getHeight();
+
+        CellDto[][] cellDtos = new CellDto[height][width];
+
+        for (int row = 0; row < height; row++) {
+            for (int column = 0; column < width; column++) {
+                Cell cell = cells[row][column];
+                cellDtos[row][column] = new CellDto(cell.getState(),
+                        cell.hasMine());
+            }
+        }
+
+        return new BoardDto(id, owner, cellDtos);
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
+        sb.append("State: ");
+        sb.append(boardState);
+        sb.append('\n');
         String bar = "+" + "-".repeat(getWidth() * 2 - 1) + "+\n";
         sb.append(bar);
         for (int row = 0; row < getHeight(); row++) {
