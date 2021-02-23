@@ -1,4 +1,4 @@
-package com.minesweeper.service.impl;
+package com.minesweeper.spring.service;
 
 import com.minesweeper.business.api.Board;
 import com.minesweeper.business.api.BoardManager;

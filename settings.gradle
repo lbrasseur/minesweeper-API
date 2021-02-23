@@ -1,2 +1,4 @@
 rootProject.name = 'minesweeper-API'
 
+include ':core'
+include ':spring'
