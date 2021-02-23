@@ -262,29 +262,24 @@ public class InMemoryBoard
         }
 
         @Override
-        public void setRedFlag(boolean active) {
+        public void redFlag() {
             checkCurrentBoardState(BoardState.PLAYING);
-            if (active) {
-                checkTargetState(CellState.RED_FLAG);
-                state = CellState.RED_FLAG;
-            } else {
-                checkCurrentState(CellState.RED_FLAG);
-                checkTargetState(CellState.INITIAL);
-                state = CellState.INITIAL;
-            }
+            checkTargetState(CellState.RED_FLAG);
+            state = CellState.RED_FLAG;
         }
 
         @Override
-        public void setQuestionMark(boolean active) {
+        public void questionMark() {
             checkCurrentBoardState(BoardState.PLAYING);
-            if (active) {
-                checkTargetState(CellState.QUESTION_MARK);
-                state = CellState.QUESTION_MARK;
-            } else {
-                checkCurrentState(CellState.QUESTION_MARK);
-                checkTargetState(CellState.INITIAL);
-                state = CellState.INITIAL;
-            }
+            checkTargetState(CellState.QUESTION_MARK);
+            state = CellState.QUESTION_MARK;
+        }
+
+        @Override
+        public void initial() {
+            checkCurrentBoardState(BoardState.PLAYING);
+            checkTargetState(CellState.INITIAL);
+            state = CellState.INITIAL;
         }
 
         private void checkCurrentBoardState(BoardState currentBoardState) {

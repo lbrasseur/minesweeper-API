@@ -12,7 +12,9 @@ public interface Cell {
 
     void click();
 
-    void setRedFlag(boolean active);
+    void redFlag();
 
-    void setQuestionMark(boolean active);
+    void questionMark();
+
+    void initial();
 }

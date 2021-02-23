@@ -1,7 +1,7 @@
 package com.minesweeper.service.api;
 
 import com.minesweeper.common.api.dto.BoardDto;
-import com.minesweeper.service.api.dto.ClickCellDto;
+import com.minesweeper.service.api.dto.CellDto;
 import com.minesweeper.service.api.dto.CreateBoardDto;
 
 import javax.annotation.Nonnull;
@@ -15,5 +15,9 @@ import java.util.concurrent.CompletableFuture;
 public interface BoardService {
     CompletableFuture<BoardDto> create(@Nonnull CreateBoardDto dto);
 
-    CompletableFuture<BoardDto> click(@Nonnull ClickCellDto dto);
+    CompletableFuture<BoardDto> click(@Nonnull CellDto dto);
+
+    CompletableFuture<BoardDto> redFlag(@Nonnull CellDto dto);
+
+    CompletableFuture<BoardDto> questionMark(@Nonnull CellDto dto);
 }

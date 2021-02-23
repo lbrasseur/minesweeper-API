@@ -7,16 +7,16 @@ import javax.annotation.Nonnull;
 
 import static java.util.Objects.requireNonNull;
 
-public class ClickCellDto {
+public class CellDto {
     @Nonnull
     private final String boardId;
     private final int column;
     private final int row;
 
     @JsonCreator
-    public ClickCellDto(@JsonProperty("boardId") @Nonnull String boardId,
-                        @JsonProperty("column") int column,
-                        @JsonProperty("row") int row) {
+    public CellDto(@JsonProperty("boardId") @Nonnull String boardId,
+                   @JsonProperty("column") int column,
+                   @JsonProperty("row") int row) {
         this.boardId = requireNonNull(boardId);
         this.column = column;
         this.row = row;

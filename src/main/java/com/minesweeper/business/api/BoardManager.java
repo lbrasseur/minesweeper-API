@@ -14,5 +14,17 @@ public interface BoardManager {
     CompletableFuture<Board> getBoard(@Nonnull String boardId);
 
     @Nonnull
-    CompletableFuture<Board> click(@Nonnull String boardId, int column, int row);
+    CompletableFuture<Board> click(@Nonnull String boardId,
+                                   int column,
+                                   int row);
+
+    @Nonnull
+    CompletableFuture<Board> redFlag(@Nonnull String boardId,
+                                     int column,
+                                     int row);
+
+    @Nonnull
+    CompletableFuture<Board> questionMark(@Nonnull String boardId,
+                                          int column,
+                                          int row);
 }

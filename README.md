@@ -21,6 +21,7 @@
 * While thinking which one to choose, I will create a Spring Bott app which seems to be supported by both AppEngine and Heroku 
 
 ## TODO
+* Spring Boot plugin is making jupiter unit test engine to fail!!!
 * Deployment
 * Authentication
 * Persistence

@@ -4,7 +4,7 @@ import com.minesweeper.business.api.Board;
 import com.minesweeper.business.api.BoardManager;
 import com.minesweeper.common.api.dto.BoardDto;
 import com.minesweeper.service.api.BoardService;
-import com.minesweeper.service.api.dto.ClickCellDto;
+import com.minesweeper.service.api.dto.CellDto;
 import com.minesweeper.service.api.dto.CreateBoardDto;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,10 +40,30 @@ public class BoardServiceImpl
 
     @Override
     @PostMapping("/click")
-    public CompletableFuture<BoardDto> click(@RequestBody @Nonnull ClickCellDto dto) {
+    public CompletableFuture<BoardDto> click(@RequestBody @Nonnull CellDto dto) {
         requireNonNull(dto);
 
         return toDto(boardManager.click(dto.getBoardId(),
+                dto.getColumn(),
+                dto.getRow()));
+    }
+
+    @Override
+    @PostMapping("/redFlag")
+    public CompletableFuture<BoardDto> redFlag(@RequestBody @Nonnull CellDto dto) {
+        requireNonNull(dto);
+
+        return toDto(boardManager.redFlag(dto.getBoardId(),
+                dto.getColumn(),
+                dto.getRow()));
+    }
+
+    @Override
+    @PostMapping("/questionMark")
+    public CompletableFuture<BoardDto> questionMark(@RequestBody @Nonnull CellDto dto) {
+        requireNonNull(dto);
+
+        return toDto(boardManager.questionMark(dto.getBoardId(),
                 dto.getColumn(),
                 dto.getRow()));
     }

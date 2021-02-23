@@ -2,6 +2,7 @@ package com.minesweeper.business.impl;
 
 import com.minesweeper.business.api.Board;
 import com.minesweeper.business.api.BoardManager;
+import com.minesweeper.business.api.Cell;
 import com.minesweeper.business.api.IdGenerator;
 import com.minesweeper.data.api.BoardDao;
 import org.springframework.stereotype.Component;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 import static java.util.Objects.requireNonNull;
 
@@ -55,9 +57,30 @@ public class InMemoryBoardManager
                                           int column,
                                           int row) {
         requireNonNull(boardId);
+        return processCell(boardId, column, row, Cell::click);
+    }
+
+    @Nonnull
+    @Override
+    public CompletableFuture<Board> redFlag(@Nonnull String boardId,
+                                            int column,
+                                            int row) {
+        return processCell(boardId, column, row, Cell::redFlag);
+    }
+
+    @Nonnull
+    @Override
+    public CompletableFuture<Board> questionMark(@Nonnull String boardId, int column, int row) {
+        return null;
+    }
+
+    private CompletableFuture<Board> processCell(String boardId,
+                                                 int column,
+                                                 int row,
+                                                 Consumer<Cell> cellConsumer) {
         return getBoard(boardId)
                 .thenCompose(board -> {
-                    board.getCell(column, row).click();
+                    cellConsumer.accept(board.getCell(column, row));
                     System.out.println(board);
                     return saveBoard(board);
                 });
