@@ -1,0 +1,8 @@
+Width: <input [(value)]="width"/><br/>
+Height: <input [(value)]="height"/><br/>
+Mines: <input [(value)]="mines"/><br/>
+<button (click)="createBoard();">Create board</button>
+<br/><br/>
+<tr *ngFor="let cellRow of cells">
+  <td *ngFor="let cell of cellRow">{{cell.state}}</td>
+</tr>

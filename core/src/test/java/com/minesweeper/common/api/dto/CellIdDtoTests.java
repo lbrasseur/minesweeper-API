@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class CellDtoTests {
+public class CellIdDtoTests {
     @Test
     void testCreation() {
         CellDto dto = new CellDto(CellState.CLICKED, true);

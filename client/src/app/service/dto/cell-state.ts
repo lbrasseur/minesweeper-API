@@ -1,0 +1,6 @@
+export enum CellState {
+  INITIAL = "INITIAL",
+  CLICKED = "CLICKED",
+  QUESTION_MARK = "QUESTION_MARK",
+  RED_FLAG = "RED_FLAG"
+}
