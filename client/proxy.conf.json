@@ -2,5 +2,17 @@
   "/create": {
     "target": "http://localhost:8080",
     "secure": false
+  },
+  "/click": {
+    "target": "http://localhost:8080",
+    "secure": false
+  },
+  "/redFlag": {
+    "target": "http://localhost:8080",
+    "secure": false
+  },
+  "/questionMark": {
+    "target": "http://localhost:8080",
+    "secure": false
   }
 }

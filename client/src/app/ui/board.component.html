@@ -1,8 +1,12 @@
-Width: <input [(value)]="width"/><br/>
-Height: <input [(value)]="height"/><br/>
-Mines: <input [(value)]="mines"/><br/>
-<button (click)="createBoard();">Create board</button>
+Width: <input #width value="10"/><br/>
+Height: <input #height value="7"/><br/>
+Mines: <input #mines value="5"/><br/>
+<button (click)="createBoard(width.value, height.value, mines.value);">Create board</button>
 <br/><br/>
-<tr *ngFor="let cellRow of cells">
-  <td *ngFor="let cell of cellRow">{{cell.state}}</td>
-</tr>
+<p *ngFor="let cellRow of cells; let row = index" class="boardItem">
+  <img *ngFor="let cell of cellRow; let column = index"
+       (click)="clickCell(column, row);"
+       (contextmenu)="redFlagCell(column, row); false"
+       src="assets/{{cell.state.toLowerCase()}}.png"
+       class="boardItem"/>
+</p>

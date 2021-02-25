@@ -10,10 +10,7 @@ import { CellState } from '../service/dto/cell-state';
   styleUrls: ['./board.component.css']
 })
 export class BoardComponent implements OnInit {
-  width: number = 10;
-  height: number = 7;
-  mines: number = 9;
-
+  currentBoard: string;
   cells: CellDto[][];
 
   constructor(private manager: BoardManager) { }
@@ -21,8 +18,27 @@ export class BoardComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  createBoard() {
-    this.manager.createBoard(this.width, this.height, this.mines)
+  createBoard(width: number,
+      height: number,
+      mines: number) {
+    this.manager.createBoard(width, height, mines)
+      .subscribe((dto: BoardDto) => {
+        this.currentBoard = dto.id;
+        this.cells = dto.cells;
+      });
+  }
+
+  clickCell(column: number,
+      row: number) {
+    this.manager.click(this.currentBoard, column, row)
+      .subscribe((dto: BoardDto) => {
+        this.cells = dto.cells;
+      });
+  }
+
+  redFlagCell(column: number,
+      row: number) {
+    this.manager.redFlag(this.currentBoard, column, row)
       .subscribe((dto: BoardDto) => {
         this.cells = dto.cells;
       });
