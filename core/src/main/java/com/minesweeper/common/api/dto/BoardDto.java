@@ -2,8 +2,10 @@ package com.minesweeper.common.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.minesweeper.business.api.BoardState;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
@@ -15,11 +17,14 @@ public class BoardDto {
     private final String owner;
     @Nonnull
     private final CellDto[][] cells;
+    @Nullable
+    private final BoardState state;
 
     @JsonCreator
     public BoardDto(@JsonProperty("id") @Nonnull String id,
                     @JsonProperty("owner") @Nonnull String owner,
-                    @JsonProperty("cells") @Nonnull CellDto[][] cells) {
+                    @JsonProperty("cells") @Nonnull CellDto[][] cells,
+                    @JsonProperty("state") @Nullable BoardState state) {
         requireNonNull(id, "Id can't be null");
         requireNonNull(owner, "Owner can't be null");
         requireNonNull(cells, "Cells can't be null");
@@ -37,6 +42,7 @@ public class BoardDto {
         this.id = id;
         this.owner = owner;
         this.cells = cells;
+        this.state = state;
     }
 
     @Nonnull
@@ -52,5 +58,10 @@ public class BoardDto {
     @Nonnull
     public CellDto[][] getCells() {
         return cells;
+    }
+
+    @Nullable
+    public BoardState getState() {
+        return state;
     }
 }

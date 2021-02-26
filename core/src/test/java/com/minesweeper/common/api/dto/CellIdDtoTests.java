@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class CellIdDtoTests {
     @Test
     void testCreation() {
-        CellDto dto = new CellDto(CellState.CLICKED, true);
+        CellDto dto = new CellDto(CellState.CLICKED, true, null);
         assertEquals(CellState.CLICKED, dto.getState());
         assertEquals(true, dto.isHasMine());
     }
@@ -18,7 +18,7 @@ public class CellIdDtoTests {
     void testNullState() {
         Exception thrown = assertThrows(
                 NullPointerException.class,
-                () -> new CellDto(null, true),
+                () -> new CellDto(null, true, null),
                 "NPE expected"
         );
         assertEquals("State can't be null", thrown.getMessage());

@@ -1,3 +1,13 @@
 .boardItem {
   margin: 0;
 }
+
+.cellText {
+  display: inline-block;
+  height: 48px;
+  margin: 0;
+  width: 48px;
+  text-align: center;
+  vertical-align: bottom;
+  font-size: large;
+}

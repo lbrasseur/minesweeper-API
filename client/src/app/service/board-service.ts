@@ -27,4 +27,8 @@ export class BoardService {
   questionMark(dto: CellIdDto): Observable<BoardDto> {
     return this.http.post<BoardDto>("/questionMark", dto);
   }
+
+  initial(dto: CellIdDto): Observable<BoardDto> {
+    return this.http.post<BoardDto>("/initial", dto);
+  }
 }

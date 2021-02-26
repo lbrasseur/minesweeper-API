@@ -14,7 +14,8 @@ public class BoardDtoTests {
 
         BoardDto dto = new BoardDto(id,
                 owner,
-                buildCells(5, 3));
+                buildCells(5, 3),
+                null);
         assertEquals(id, dto.getId());
         assertEquals(owner, dto.getOwner());
     }
@@ -25,7 +26,8 @@ public class BoardDtoTests {
                 NullPointerException.class,
                 () -> new BoardDto(null,
                         "owner",
-                        buildCells(5, 3)),
+                        buildCells(5, 3),
+                        null),
                 "NPE expected"
         );
         assertEquals("Id can't be null", thrown.getMessage());
@@ -37,7 +39,8 @@ public class BoardDtoTests {
                 NullPointerException.class,
                 () -> new BoardDto("id",
                         null,
-                        buildCells(5, 3)),
+                        buildCells(5, 3),
+                        null),
                 "NPE expected"
         );
         assertEquals("Owner can't be null", thrown.getMessage());
@@ -49,6 +52,7 @@ public class BoardDtoTests {
                 NullPointerException.class,
                 () -> new BoardDto("id",
                         "owner",
+                        null,
                         null),
                 "NPE expected"
         );
@@ -63,7 +67,8 @@ public class BoardDtoTests {
                 NullPointerException.class,
                 () -> new BoardDto("id",
                         "owner",
-                        cells),
+                        cells,
+                        null),
                 "NPE expected"
         );
         assertEquals("A cell row can't be null", thrown.getMessage());
@@ -77,7 +82,8 @@ public class BoardDtoTests {
                 NullPointerException.class,
                 () -> new BoardDto("id",
                         "owner",
-                        cells),
+                        cells,
+                        null),
                 "NPE expected"
         );
         assertEquals("A cell can't be null", thrown.getMessage());
@@ -87,12 +93,13 @@ public class BoardDtoTests {
     void testRowSize() {
         final CellDto[][] cells = buildCells(5, 3);
         cells[2] = new CellDto[1];
-        cells[2][0] = new CellDto(CellState.INITIAL, false);
+        cells[2][0] = new CellDto(CellState.INITIAL, false, null);
         Exception thrown = assertThrows(
                 IllegalArgumentException.class,
                 () -> new BoardDto("id",
                         "owner",
-                        cells),
+                        cells,
+                        null),
                 "NPE expected"
         );
         assertEquals("All the rows must have the same column count", thrown.getMessage());
@@ -104,7 +111,8 @@ public class BoardDtoTests {
                 IllegalArgumentException.class,
                 () -> new BoardDto("id",
                         "owner",
-                        buildCells(0, 3)),
+                        buildCells(0, 3),
+                        null),
                 "NPE expected"
         );
         assertEquals("Cell columns must be greater than 0", thrown.getMessage());
@@ -116,7 +124,8 @@ public class BoardDtoTests {
                 IllegalArgumentException.class,
                 () -> new BoardDto("id",
                         "owner",
-                        buildCells(5, 0)),
+                        buildCells(5, 0),
+                        null),
                 "NPE expected"
         );
         assertEquals("Cell rows must be greater than 0", thrown.getMessage());
@@ -126,7 +135,7 @@ public class BoardDtoTests {
         CellDto[][] cells = new CellDto[height][width];
         for (int row = 0; row < height; row++) {
             for (int column = 0; column < width; column++) {
-                cells[row][column] = new CellDto(CellState.INITIAL, false);
+                cells[row][column] = new CellDto(CellState.INITIAL, false, null);
             }
         }
         return cells;

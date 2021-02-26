@@ -27,6 +27,7 @@ public class BoardServiceImpl
     }
 
     @Override
+    @Nonnull
     @PostMapping("/create")
     public CompletableFuture<BoardDto> create(@RequestBody @Nonnull CreateBoardDto dto) {
         requireNonNull(dto);
@@ -39,6 +40,7 @@ public class BoardServiceImpl
     }
 
     @Override
+    @Nonnull
     @PostMapping("/click")
     public CompletableFuture<BoardDto> click(@RequestBody @Nonnull CellIdDto dto) {
         requireNonNull(dto);
@@ -49,6 +51,7 @@ public class BoardServiceImpl
     }
 
     @Override
+    @Nonnull
     @PostMapping("/redFlag")
     public CompletableFuture<BoardDto> redFlag(@RequestBody @Nonnull CellIdDto dto) {
         requireNonNull(dto);
@@ -59,6 +62,7 @@ public class BoardServiceImpl
     }
 
     @Override
+    @Nonnull
     @PostMapping("/questionMark")
     public CompletableFuture<BoardDto> questionMark(@RequestBody @Nonnull CellIdDto dto) {
         requireNonNull(dto);
@@ -68,8 +72,19 @@ public class BoardServiceImpl
                 dto.getRow()));
     }
 
+    @Override
+    @Nonnull
+    @PostMapping("/initial")
+    public CompletableFuture<BoardDto> initial(@RequestBody @Nonnull CellIdDto dto) {
+        requireNonNull(dto);
+
+        return toDto(boardManager.initial(dto.getBoardId(),
+                dto.getColumn(),
+                dto.getRow()));
+    }
+
     private CompletableFuture<BoardDto> toDto(CompletableFuture<Board> boardFuture) {
         return boardFuture
-                .thenApply(Board::toDto);
+                .thenApply(board -> board.toDto(true));
     }
 }

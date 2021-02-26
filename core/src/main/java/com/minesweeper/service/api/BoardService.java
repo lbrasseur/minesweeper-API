@@ -13,11 +13,18 @@ import java.util.concurrent.CompletableFuture;
  * Of course it should be put into a separated project.
  */
 public interface BoardService {
+    @Nonnull
     CompletableFuture<BoardDto> create(@Nonnull CreateBoardDto dto);
 
+    @Nonnull
     CompletableFuture<BoardDto> click(@Nonnull CellIdDto dto);
 
+    @Nonnull
     CompletableFuture<BoardDto> redFlag(@Nonnull CellIdDto dto);
 
+    @Nonnull
     CompletableFuture<BoardDto> questionMark(@Nonnull CellIdDto dto);
+
+    @Nonnull
+    CompletableFuture<BoardDto> initial(@Nonnull CellIdDto dto);
 }

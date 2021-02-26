@@ -14,5 +14,9 @@
   "/questionMark": {
     "target": "http://localhost:8080",
     "secure": false
+  },
+  "/initial": {
+    "target": "http://localhost:8080",
+    "secure": false
   }
 }

@@ -27,4 +27,9 @@ public interface BoardManager {
     CompletableFuture<Board> questionMark(@Nonnull String boardId,
                                           int column,
                                           int row);
+
+    @Nonnull
+    CompletableFuture<Board> initial(@Nonnull String boardId,
+                                     int column,
+                                     int row);
 }

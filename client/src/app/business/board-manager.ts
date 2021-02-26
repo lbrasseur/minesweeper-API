@@ -49,4 +49,14 @@ export class BoardManager {
       row: row
     });
   }
+
+  initial(boardId: string,
+      column: number,
+      row: number): Observable<BoardDto> {
+    return this.service.initial({
+      boardId: boardId,
+      column: column,
+      row: row
+    });
+  }
 }

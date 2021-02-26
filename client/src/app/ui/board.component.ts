@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { BoardManager } from '../business/board-manager';
 import { BoardDto } from '../service/dto/board-dto';
+import { BoardState } from '../service/dto/board-state';
 import { CellDto } from '../service/dto/cell-dto';
 import { CellState } from '../service/dto/cell-state';
+
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-board',
@@ -10,7 +13,8 @@ import { CellState } from '../service/dto/cell-state';
   styleUrls: ['./board.component.css']
 })
 export class BoardComponent implements OnInit {
-  currentBoard: string;
+  boardId: string;
+  boardState: BoardState = BoardState.PLAYING;
   cells: CellDto[][];
 
   constructor(private manager: BoardManager) { }
@@ -21,26 +25,61 @@ export class BoardComponent implements OnInit {
   createBoard(width: number,
       height: number,
       mines: number) {
-    this.manager.createBoard(width, height, mines)
-      .subscribe((dto: BoardDto) => {
-        this.currentBoard = dto.id;
-        this.cells = dto.cells;
-      });
+    this.updateBoard(this.manager.createBoard(width, height, mines));
   }
 
-  clickCell(column: number,
+  clickCell(cell: CellDto,
+      column: number,
       row: number) {
-    this.manager.click(this.currentBoard, column, row)
-      .subscribe((dto: BoardDto) => {
-        this.cells = dto.cells;
-      });
+    if (cell.state == CellState.INITIAL) {
+      this.updateBoard(this.manager.click(this.boardId, column, row));
+    }
   }
 
-  redFlagCell(column: number,
+  rightClick(cell: CellDto,
+      column: number,
       row: number) {
-    this.manager.redFlag(this.currentBoard, column, row)
-      .subscribe((dto: BoardDto) => {
-        this.cells = dto.cells;
-      });
+    switch (cell.state) {
+      case CellState.INITIAL:
+        this.updateBoard(this.manager.redFlag(this.boardId, column, row));
+        break;
+      case CellState.RED_FLAG:
+        this.updateBoard(this.manager.questionMark(this.boardId, column, row));
+        break;
+      case CellState.QUESTION_MARK:
+        this.updateBoard(this.manager.initial(this.boardId, column, row));
+        break;
+    }
+  }
+
+  cellAsset(cell: CellDto): string {
+    return cell.state == CellState.CLICKED && cell.hasMine
+      ? "mine"
+      : cell.state.toLowerCase();
+  }
+
+  cellColor(cell: CellDto): string {
+    switch (cell.borderingMines) {
+      case 1: return "blue";
+      case 2: return "green";
+      case 3: return "red";
+      case 4: return "darkBlue";
+      case 5: return "brown";
+      default: return "black";
+    }
+  }
+
+  cellNumber(cell: CellDto): string {
+    return cell.state == CellState.CLICKED &&  cell.borderingMines > 0 && !cell.hasMine
+      ? (""+cell.borderingMines)
+      : "";
+  }
+
+  private updateBoard(operation: Observable<BoardDto>) {
+    operation.subscribe((dto: BoardDto) => {
+      this.boardId = dto.id;
+      this.boardState = dto.state;
+      this.cells = dto.cells;
+    });
   }
 }

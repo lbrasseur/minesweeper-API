@@ -71,7 +71,13 @@ public class InMemoryBoardManager
     @Nonnull
     @Override
     public CompletableFuture<Board> questionMark(@Nonnull String boardId, int column, int row) {
-        return null;
+        return processCell(boardId, column, row, Cell::questionMark);
+    }
+
+    @Nonnull
+    @Override
+    public CompletableFuture<Board> initial(@Nonnull String boardId, int column, int row) {
+        return processCell(boardId, column, row, Cell::initial);
     }
 
     private CompletableFuture<Board> processCell(String boardId,
@@ -87,7 +93,7 @@ public class InMemoryBoardManager
     }
 
     private CompletableFuture<Board> saveBoard(Board board) {
-        return boardDao.saveBoard(board.toDto())
+        return boardDao.saveBoard(board.toDto(false))
                 .thenApply(dummy -> board);
     }
 }

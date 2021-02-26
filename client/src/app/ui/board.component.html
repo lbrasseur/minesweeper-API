@@ -3,10 +3,11 @@ Height: <input #height value="7"/><br/>
 Mines: <input #mines value="5"/><br/>
 <button (click)="createBoard(width.value, height.value, mines.value);">Create board</button>
 <br/><br/>
-<p *ngFor="let cellRow of cells; let row = index" class="boardItem">
-  <img *ngFor="let cell of cellRow; let column = index"
-       (click)="clickCell(column, row);"
-       (contextmenu)="redFlagCell(column, row); false"
-       src="assets/{{cell.state.toLowerCase()}}.png"
-       class="boardItem"/>
-</p>
+<img src="assets/{{boardState.toLowerCase()}}.png"/>
+<div *ngFor="let cellRow of cells; let row = index" class="boardItem">
+  <div *ngFor="let cell of cellRow; let column = index"
+     (click)="clickCell(cell, column, row);"
+     (contextmenu)="rightClick(cell, column, row); false"
+     class="cellText"
+     style="background-image: url(assets/{{cellAsset(cell)}}.png);color: {{cellColor(cell)}}">{{cellNumber(cell)}}</div>
+</div>

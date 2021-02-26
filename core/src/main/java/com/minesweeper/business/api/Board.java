@@ -20,5 +20,6 @@ public interface Board {
     @Nonnull
     BoardState getState();
 
-    BoardDto toDto();
+    // TODO: setting this parameter seems odd... but allows reusing the DTO for both UI and storage
+    BoardDto toDto(boolean full);
 }

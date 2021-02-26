@@ -17,7 +17,7 @@ public class InMemoryBoard
         implements Board {
     private final String id;
     private final String owner;
-    private final Cell[][] cells;
+    private final InMemoryCell[][] cells;
     private BoardState boardState;
     private int pendingCells;
 
@@ -36,7 +36,7 @@ public class InMemoryBoard
 
         this.id = id;
         this.owner = owner;
-        cells = new Cell[height][width];
+        cells = new InMemoryCell[height][width];
         boardState = BoardState.PLAYING;
         pendingCells = boardSize - mineCount;
 
@@ -52,17 +52,17 @@ public class InMemoryBoard
         boardState = BoardState.PLAYING;
 
         CellDto[][] dtoCells = dto.getCells();
-        cells = new Cell[dtoCells.length][];
+        cells = new InMemoryCell[dtoCells.length][];
         for (int row = 0; row < dtoCells.length; row++) {
             CellDto[] cellsDtoRow = dtoCells[row];
-            cells[row] = new Cell[cellsDtoRow.length];
+            cells[row] = new InMemoryCell[cellsDtoRow.length];
             for (int column = 0; column < cellsDtoRow.length; column++) {
                 CellDto cellDto = cellsDtoRow[column];
                 cells[row][column] = new InMemoryCell(cellDto.getState(),
                         cellDto.isHasMine(),
                         column,
                         row);
-                if (cellDto.getState() == CellState.CLICKED) {
+                if (cellDto.getState() == CellState.CLICKED || cellDto.isHasMine()) {
                     pendingCells--;
                 }
             }
@@ -108,7 +108,7 @@ public class InMemoryBoard
     }
 
     @Override
-    public BoardDto toDto() {
+    public BoardDto toDto(boolean full) {
         int width = getWidth();
         int height = getHeight();
 
@@ -118,11 +118,12 @@ public class InMemoryBoard
             for (int column = 0; column < width; column++) {
                 Cell cell = cells[row][column];
                 cellDtos[row][column] = new CellDto(cell.getState(),
-                        cell.hasMine());
+                        cell.hasMine(),
+                        full ? cell.getBorderingMinesCount() : null);
             }
         }
 
-        return new BoardDto(id, owner, cellDtos);
+        return new BoardDto(id, owner, cellDtos, full ? boardState : null);
     }
 
     @Override
@@ -195,6 +196,13 @@ public class InMemoryBoard
     private void updateStatusIfSolved() {
         if (boardState == BoardState.PLAYING && pendingCells == 0) {
             boardState = BoardState.SOLVED;
+            for (InMemoryCell[] row : cells) {
+                for (InMemoryCell cell : row) {
+                    if (cell.hasMine()) {
+                        cell.state = CellState.RED_FLAG;
+                    }
+                }
+            }
         }
     }
 
