@@ -1,10 +1,11 @@
 package com.minesweeper.business.api;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
-import static java.util.Objects.requireNonNull;
-
-public enum CellState {
+public enum CellState
+        implements StateEnum<CellState> {
     INITIAL(2, 3), //0
     CLICKED(0), //1
     QUESTION_MARK(0, 3), //2
@@ -16,13 +17,21 @@ public enum CellState {
         this.allowedSourceStates = allowedSourceStates;
     }
 
-    public boolean isAllowedSource(@Nonnull CellState sourceState) {
-        requireNonNull(sourceState);
-        for (int allowedState : allowedSourceStates) {
-            if (sourceState == values()[allowedState]) {
-                return true;
-            }
-        }
-        return false;
+    @Nonnull
+    @Override
+    public CellState state() {
+        return this;
+    }
+
+    @Nonnull
+    @Override
+    public CellState state(int ordinal) {
+        return CellState.values()[ordinal];
+    }
+
+    @Nonnull
+    @Override
+    public int[] allowedSourceStates() {
+        return allowedSourceStates;
     }
 }

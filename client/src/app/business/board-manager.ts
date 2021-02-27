@@ -20,6 +20,18 @@ export class BoardManager {
     });
   }
 
+  pause(boardId: string): Observable<BoardDto> {
+    return this.service.pause({
+      boardId: boardId
+    });
+  }
+
+  resume(boardId: string): Observable<BoardDto> {
+    return this.service.resume({
+      boardId: boardId
+    });
+  }
+
   click(boardId: string,
       column: number,
       row: number): Observable<BoardDto> {

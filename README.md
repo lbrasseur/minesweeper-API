@@ -7,11 +7,11 @@
 * Define a clear separation between interface APIs and their implementations.
 * Using dependency injection to wire the components.  If possible, use Dagger2 for performance and build time validations.
 * Making the services stateless in order to make it scale better.
-* I will start with a blocking approach, refactoring for a non-blocking later if it is considered a need.
 * Not following REST strictly. I prefer, for example, returning status information in payload because that provides more flexibility than just HTTP codes. The same logic applies for HTTP methods.
 * The board will be implemented in memory, since querying storage for each cell could be non performant.
 * Start with some POC before writing unit tests (this might contradict TDD a little).
 * Store the board as a serialized JSON using a random generated string as key, this way I can deploy it easily on most storages.
+* Simple user table for authentication (no integration with 3rd party authentication services, no OAuth2, etc.)
 
 ## Deployment
 * Reviewed platforms
@@ -25,8 +25,11 @@
 * Authentication
 * Persistence
 * Define bindings in a separated class (Like Guice or Dagger) instead og using @Component
-* Client app (Angular w/TypeScript?)
+  * Using Dagger2 + Spark has better startup than Spring, I can try it later.
 * Time tracking
+
+## Missign functionality from original game
+* Cell cleaning when clicking 2 buttons at the same time (is there an event for that??) 
 
 ## Sample data
 ```

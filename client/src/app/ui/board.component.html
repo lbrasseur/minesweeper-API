@@ -1,13 +1,27 @@
-Width: <input #width value="10"/><br/>
-Height: <input #height value="7"/><br/>
-Mines: <input #mines value="5"/><br/>
-<button (click)="createBoard(width.value, height.value, mines.value);">Create board</button>
-<br/><br/>
-<img src="assets/{{boardState.toLowerCase()}}.png"/>
-<div *ngFor="let cellRow of cells; let row = index" class="boardItem">
-  <div *ngFor="let cell of cellRow; let column = index"
-     (click)="clickCell(cell, column, row);"
-     (contextmenu)="rightClick(cell, column, row); false"
-     class="cellText"
-     style="background-image: url(assets/{{cellAsset(cell)}}.png);color: {{cellColor(cell)}}">{{cellNumber(cell)}}</div>
-</div>
+<table>
+  <tr>
+    <td class="section">
+      <p>Width: <input #width value="10"/></p>
+      <p>Height: <input #height value="7"/></p>
+      <p>Mines: <input #mines value="5"/></p>
+      <p>
+        <button (click)="createBoard(width.value, height.value, mines.value);">Create board</button>
+      </p>
+      <p>
+        <button *ngIf="isPlaying()" (click)="pause();">Pause</button>
+        <button *ngIf="isPaused()" (click)="resume();">Resume</button>
+      </p>
+    </td>
+    <td *ngIf="isVisible()" class="section">
+      <img src=" assets/{{boardState.toLowerCase()}}.png"/> {{formattedPlayingTime}}
+      <div *ngFor="let cellRow of cells; let row = index" class="boardItem">
+        <div *ngFor="let cell of cellRow; let column = index"
+             (click)="clickCell(cell, column, row);"
+             (contextmenu)="rightClick(cell, column, row); false"
+             class="cellText"
+             style="background-image:url(assets/{{cellAsset(cell)}}.png);color:{{cellColor(cell)}}">{{cellNumber(cell)}}
+        </div>
+      </div>
+    </td>
+  </tr>
+</table>

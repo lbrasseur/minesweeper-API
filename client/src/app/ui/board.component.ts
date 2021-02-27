@@ -7,6 +7,10 @@ import { CellState } from '../service/dto/cell-state';
 
 import { Observable } from 'rxjs';
 
+const HOUR_MINUTE_RATIO = 60;
+const MINUTE_SECOND_RATIO = 60;
+const SECOND_MILLI_RATIO = 1000;
+
 @Component({
   selector: 'app-board',
   templateUrl: './board.component.html',
@@ -14,18 +18,50 @@ import { Observable } from 'rxjs';
 })
 export class BoardComponent implements OnInit {
   boardId: string;
-  boardState: BoardState = BoardState.PLAYING;
+  boardState: BoardState;
   cells: CellDto[][];
+  playingTime: number;
+  formattedPlayingTime: string;
 
   constructor(private manager: BoardManager) { }
 
   ngOnInit(): void {
+  setInterval(() => {
+      if (this.isPlaying() && this.playingTime != null) {
+        this.playingTime += SECOND_MILLI_RATIO;
+        this.updatePlayingTime();
+      }
+    }, SECOND_MILLI_RATIO);
   }
 
   createBoard(width: number,
       height: number,
       mines: number) {
+    this.playingTime = null;
     this.updateBoard(this.manager.createBoard(width, height, mines));
+  }
+
+  pause() {
+    this.playingTime = null;
+    this.updateBoard(this.manager.pause(this.boardId));
+  }
+
+  resume() {
+    this.updateBoard(this.manager.resume(this.boardId));
+  }
+
+  isPaused() : boolean {
+    return this.boardState == BoardState.PAUSED;
+  }
+
+  isPlaying() : boolean {
+    return this.boardState == BoardState.PLAYING;
+  }
+
+  isVisible() : boolean {
+    return this.boardState == BoardState.PLAYING
+      ||  this.boardState == BoardState.SOLVED
+      ||  this.boardState == BoardState.EXPLODED;
   }
 
   clickCell(cell: CellDto,
@@ -80,6 +116,28 @@ export class BoardComponent implements OnInit {
       this.boardId = dto.id;
       this.boardState = dto.state;
       this.cells = dto.cells;
+      if (this.playingTime == null) {
+        this.playingTime = dto.playingTime;
+        this.updatePlayingTime();
+      }
     });
   }
+
+  private updatePlayingTime() {
+    var seconds = Math.floor(this.playingTime / SECOND_MILLI_RATIO);
+    var minutes = Math.floor(seconds / MINUTE_SECOND_RATIO);
+    var hours = Math.floor(minutes / HOUR_MINUTE_RATIO);
+    seconds -= minutes * MINUTE_SECOND_RATIO;
+    minutes -= hours * HOUR_MINUTE_RATIO;
+
+    let date = new Date(Date.UTC(0, 0, 0, hours, minutes, seconds));
+    new Date();
+    this.formattedPlayingTime = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+  }
+}
+
+function pad(num) {
+    let s = num + "";
+    while (s.length < 2) s = "0" + s;
+    return s;
 }

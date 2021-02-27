@@ -34,21 +34,25 @@ public class InMemoryBoardManager
                                                 int height,
                                                 int mines) {
         requireNonNull(owner);
-        Board board = new InMemoryBoard(idGenerator.generateId(),
+        return saveBoard(new InMemoryBoard(idGenerator.generateId(),
                 owner,
                 width,
                 height,
-                mines);
-        System.out.println(board);
-        return saveBoard(board);
+                mines));
     }
 
     @Nonnull
     @Override
-    public CompletableFuture<Board> getBoard(@Nonnull String boardId) {
+    public CompletableFuture<Board> pauseBoard(@Nonnull String boardId) {
         requireNonNull(boardId);
-        return boardDao.readBoard(boardId)
-                .thenApply(InMemoryBoard::new);
+        return processBoard(boardId, Board::pause);
+    }
+
+    @Nonnull
+    @Override
+    public CompletableFuture<Board> resumeBoard(@Nonnull String boardId) {
+        requireNonNull(boardId);
+        return processBoard(boardId, Board::resume);
     }
 
     @Nonnull
@@ -80,20 +84,31 @@ public class InMemoryBoardManager
         return processCell(boardId, column, row, Cell::initial);
     }
 
+    private CompletableFuture<Board> getBoard(@Nonnull String boardId) {
+        requireNonNull(boardId);
+        return boardDao.readBoard(boardId)
+                .thenApply(InMemoryBoard::new);
+    }
+
     private CompletableFuture<Board> processCell(String boardId,
                                                  int column,
                                                  int row,
                                                  Consumer<Cell> cellConsumer) {
+        return processBoard(boardId,
+                board -> cellConsumer.accept(board.getCell(column, row)));
+    }
+
+    private CompletableFuture<Board> processBoard(String boardId,
+                                                  Consumer<Board> boardConsumerConsumer) {
         return getBoard(boardId)
                 .thenCompose(board -> {
-                    cellConsumer.accept(board.getCell(column, row));
-                    System.out.println(board);
+                    boardConsumerConsumer.accept(board);
                     return saveBoard(board);
                 });
     }
 
     private CompletableFuture<Board> saveBoard(Board board) {
-        return boardDao.saveBoard(board.toDto(false))
+        return boardDao.saveBoard(board.toDto())
                 .thenApply(dummy -> board);
     }
 }

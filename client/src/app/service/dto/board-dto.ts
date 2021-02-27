@@ -6,4 +6,5 @@ export class BoardDto {
   owner: string;
   cells: CellDto[][];
   state: BoardState;
+  playingTime: number;
 }

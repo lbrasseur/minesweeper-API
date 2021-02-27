@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CreateBoardDto } from './dto/create-board-dto';
 import { CellIdDto } from './dto/cell-id-dto';
+import { BoardIdDto } from './dto/board-id-dto';
 import { BoardDto } from './dto/board-dto';
 import { Observable } from 'rxjs';
 
@@ -14,6 +15,14 @@ export class BoardService {
 
   createBoard(dto: CreateBoardDto): Observable<BoardDto> {
     return this.http.post<BoardDto>("/create", dto);
+  }
+
+  pause(dto: BoardIdDto): Observable<BoardDto> {
+    return this.http.post<BoardDto>("/pause", dto);
+  }
+
+  resume(dto: BoardIdDto): Observable<BoardDto> {
+    return this.http.post<BoardDto>("/resume", dto);
   }
 
   click(dto: CellIdDto): Observable<BoardDto> {

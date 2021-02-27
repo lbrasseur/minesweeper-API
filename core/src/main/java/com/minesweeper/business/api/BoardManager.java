@@ -11,7 +11,10 @@ public interface BoardManager {
                                          int mines);
 
     @Nonnull
-    CompletableFuture<Board> getBoard(@Nonnull String boardId);
+    CompletableFuture<Board> pauseBoard(@Nonnull String boardId);
+
+    @Nonnull
+    CompletableFuture<Board> resumeBoard(@Nonnull String boardId);
 
     @Nonnull
     CompletableFuture<Board> click(@Nonnull String boardId,

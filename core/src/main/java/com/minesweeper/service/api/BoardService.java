@@ -1,6 +1,7 @@
 package com.minesweeper.service.api;
 
 import com.minesweeper.common.api.dto.BoardDto;
+import com.minesweeper.service.api.dto.BoardIdDto;
 import com.minesweeper.service.api.dto.CellIdDto;
 import com.minesweeper.service.api.dto.CreateBoardDto;
 
@@ -15,6 +16,12 @@ import java.util.concurrent.CompletableFuture;
 public interface BoardService {
     @Nonnull
     CompletableFuture<BoardDto> create(@Nonnull CreateBoardDto dto);
+
+    @Nonnull
+    CompletableFuture<BoardDto> pause(@Nonnull BoardIdDto dto);
+
+    @Nonnull
+    CompletableFuture<BoardDto> resume(@Nonnull BoardIdDto dto);
 
     @Nonnull
     CompletableFuture<BoardDto> click(@Nonnull CellIdDto dto);

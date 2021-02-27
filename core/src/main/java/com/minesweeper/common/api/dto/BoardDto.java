@@ -16,17 +16,25 @@ public class BoardDto {
     @Nonnull
     private final String owner;
     @Nonnull
-    private final CellDto[][] cells;
-    @Nullable
     private final BoardState state;
+    @Nonnull
+    private final CellDto[][] cells;
+    private final long creationMoment;
+    @Nullable
+    private final Long lastPlayingMoment;
+    private final long playingTime;
 
     @JsonCreator
     public BoardDto(@JsonProperty("id") @Nonnull String id,
                     @JsonProperty("owner") @Nonnull String owner,
-                    @JsonProperty("cells") @Nonnull CellDto[][] cells,
-                    @JsonProperty("state") @Nullable BoardState state) {
+                    @JsonProperty("state") @Nonnull BoardState state,
+                    @JsonProperty("creationMoment") long creationMoment,
+                    @JsonProperty("lastPlayingMoment") Long lastPlayingMoment,
+                    @JsonProperty("playingTime") long playingTime,
+                    @JsonProperty("cells") @Nonnull CellDto[][] cells) {
         requireNonNull(id, "Id can't be null");
         requireNonNull(owner, "Owner can't be null");
+        requireNonNull(state, "State can't be null");
         requireNonNull(cells, "Cells can't be null");
         checkArgument(cells.length > 0, "Cell rows must be greater than 0");
         int columnCount = cells[0].length;
@@ -42,6 +50,9 @@ public class BoardDto {
         this.id = id;
         this.owner = owner;
         this.cells = cells;
+        this.creationMoment = creationMoment;
+        this.lastPlayingMoment = lastPlayingMoment;
+        this.playingTime = playingTime;
         this.state = state;
     }
 
@@ -56,12 +67,25 @@ public class BoardDto {
     }
 
     @Nonnull
+    public BoardState getState() {
+        return state;
+    }
+
+    @Nonnull
     public CellDto[][] getCells() {
         return cells;
     }
 
+    public long getCreationMoment() {
+        return creationMoment;
+    }
+
     @Nullable
-    public BoardState getState() {
-        return state;
+    public Long getLastPlayingMoment() {
+        return lastPlayingMoment;
+    }
+
+    public long getPlayingTime() {
+        return playingTime;
     }
 }

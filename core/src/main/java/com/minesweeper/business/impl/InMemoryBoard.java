@@ -8,7 +8,10 @@ import com.minesweeper.common.api.dto.BoardDto;
 import com.minesweeper.common.api.dto.CellDto;
 
 import javax.annotation.Nonnull;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
@@ -18,8 +21,11 @@ public class InMemoryBoard
     private final String id;
     private final String owner;
     private final InMemoryCell[][] cells;
+    private final Instant creationMoment;
     private BoardState boardState;
     private int pendingCells;
+    private Instant lastPlayingMoment;
+    private Duration playingTime;
 
     public InMemoryBoard(@Nonnull String id,
                          @Nonnull String owner,
@@ -39,6 +45,9 @@ public class InMemoryBoard
         cells = new InMemoryCell[height][width];
         boardState = BoardState.PLAYING;
         pendingCells = boardSize - mineCount;
+        creationMoment = Instant.now();
+        lastPlayingMoment = creationMoment;
+        playingTime = Duration.ZERO;
 
         buildRandomCells(mineCount);
     }
@@ -46,10 +55,15 @@ public class InMemoryBoard
     public InMemoryBoard(@Nonnull BoardDto dto) {
         requireNonNull(dto, "DTO can't be null");
 
-        this.id = dto.getId();
-        this.owner = dto.getOwner();
-        this.pendingCells = dto.getCells().length * dto.getCells()[0].length;
-        boardState = BoardState.PLAYING;
+        id = dto.getId();
+        owner = dto.getOwner();
+        pendingCells = dto.getCells().length * dto.getCells()[0].length;
+        creationMoment = Instant.ofEpochSecond(dto.getCreationMoment());
+        lastPlayingMoment = dto.getLastPlayingMoment() != null
+                ? Instant.ofEpochSecond(dto.getLastPlayingMoment())
+                : null;
+        playingTime = Duration.ofMillis(dto.getPlayingTime());
+        boardState = dto.getState();
 
         CellDto[][] dtoCells = dto.getCells();
         cells = new InMemoryCell[dtoCells.length][];
@@ -108,7 +122,19 @@ public class InMemoryBoard
     }
 
     @Override
-    public BoardDto toDto(boolean full) {
+    public void pause() {
+        changeBoardState(BoardState.PAUSED);
+        updatePlayingTime();
+    }
+
+    @Override
+    public void resume() {
+        changeBoardState(BoardState.PLAYING);
+        lastPlayingMoment = Instant.now();
+    }
+
+    @Override
+    public BoardDto toDto() {
         int width = getWidth();
         int height = getHeight();
 
@@ -119,11 +145,19 @@ public class InMemoryBoard
                 Cell cell = cells[row][column];
                 cellDtos[row][column] = new CellDto(cell.getState(),
                         cell.hasMine(),
-                        full ? cell.getBorderingMinesCount() : null);
+                        cell.getBorderingMinesCount());
             }
         }
 
-        return new BoardDto(id, owner, cellDtos, full ? boardState : null);
+        return new BoardDto(id,
+                owner,
+                boardState,
+                creationMoment.getEpochSecond(),
+                lastPlayingMoment != null ?
+                        lastPlayingMoment.getEpochSecond()
+                        : null,
+                TimeUnit.MILLISECONDS.convert(playingTime),
+                cellDtos);
     }
 
     @Override
@@ -195,7 +229,8 @@ public class InMemoryBoard
 
     private void updateStatusIfSolved() {
         if (boardState == BoardState.PLAYING && pendingCells == 0) {
-            boardState = BoardState.SOLVED;
+            changeBoardState(BoardState.SOLVED);
+            updatePlayingTime();
             for (InMemoryCell[] row : cells) {
                 for (InMemoryCell cell : row) {
                     if (cell.hasMine()) {
@@ -204,6 +239,17 @@ public class InMemoryBoard
                 }
             }
         }
+    }
+
+    private void updatePlayingTime() {
+        playingTime = playingTime.plus(Duration.between(lastPlayingMoment,
+                Instant.now()));
+        lastPlayingMoment = null;
+    }
+
+    private void changeBoardState(BoardState newState) {
+        boardState.checkTargetState(newState);
+        boardState = newState;
     }
 
     private class InMemoryCell
@@ -253,8 +299,7 @@ public class InMemoryBoard
         @Override
         public void click() {
             checkCurrentBoardState(BoardState.PLAYING);
-            checkTargetState(CellState.CLICKED);
-            state = CellState.CLICKED;
+            changeState(CellState.CLICKED);
             updateStatusIfExploded();
             if (!hasMine) {
                 pendingCells--;
@@ -272,37 +317,29 @@ public class InMemoryBoard
         @Override
         public void redFlag() {
             checkCurrentBoardState(BoardState.PLAYING);
-            checkTargetState(CellState.RED_FLAG);
-            state = CellState.RED_FLAG;
+            changeState(CellState.RED_FLAG);
         }
 
         @Override
         public void questionMark() {
             checkCurrentBoardState(BoardState.PLAYING);
-            checkTargetState(CellState.QUESTION_MARK);
-            state = CellState.QUESTION_MARK;
+            changeState(CellState.QUESTION_MARK);
         }
 
         @Override
         public void initial() {
             checkCurrentBoardState(BoardState.PLAYING);
-            checkTargetState(CellState.INITIAL);
-            state = CellState.INITIAL;
+            changeState(CellState.INITIAL);
+        }
+
+        private void changeState(CellState newState) {
+            state.checkTargetState(newState);
+            state = newState;
         }
 
         private void checkCurrentBoardState(BoardState currentBoardState) {
             checkArgument(currentBoardState == boardState,
                     "Current board state is " + boardState + " and must be " + currentBoardState);
-        }
-
-        private void checkTargetState(CellState targetState) {
-            checkArgument(targetState.isAllowedSource(state),
-                    "State " + state + " can't change to state " + targetState);
-        }
-
-        private void checkCurrentState(CellState currentState) {
-            checkArgument(currentState == state,
-                    "Current state is " + state + " and must be " + currentState);
         }
 
         private Iterable<Cell> getBorderingCells() {
@@ -324,7 +361,7 @@ public class InMemoryBoard
 
         private void updateStatusIfExploded() {
             if (state == CellState.CLICKED && hasMine) {
-                boardState = BoardState.EXPLODED;
+                changeBoardState(BoardState.EXPLODED);
             }
         }
     }

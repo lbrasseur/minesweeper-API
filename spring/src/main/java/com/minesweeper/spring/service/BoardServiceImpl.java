@@ -4,6 +4,7 @@ import com.minesweeper.business.api.Board;
 import com.minesweeper.business.api.BoardManager;
 import com.minesweeper.common.api.dto.BoardDto;
 import com.minesweeper.service.api.BoardService;
+import com.minesweeper.service.api.dto.BoardIdDto;
 import com.minesweeper.service.api.dto.CellIdDto;
 import com.minesweeper.service.api.dto.CreateBoardDto;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,6 +38,24 @@ public class BoardServiceImpl
                 dto.getWidth(),
                 dto.getHeight(),
                 dto.getMines()));
+    }
+
+    @Nonnull
+    @Override
+    @PostMapping("/pause")
+    public CompletableFuture<BoardDto> pause(@RequestBody @Nonnull BoardIdDto dto) {
+        requireNonNull(dto);
+
+        return toDto(boardManager.pauseBoard(dto.getBoardId()));
+    }
+
+    @Nonnull
+    @Override
+    @PostMapping("/resume")
+    public CompletableFuture<BoardDto> resume(@RequestBody @Nonnull BoardIdDto dto) {
+        requireNonNull(dto);
+
+        return toDto(boardManager.resumeBoard(dto.getBoardId()));
     }
 
     @Override
@@ -84,7 +103,6 @@ public class BoardServiceImpl
     }
 
     private CompletableFuture<BoardDto> toDto(CompletableFuture<Board> boardFuture) {
-        return boardFuture
-                .thenApply(board -> board.toDto(true));
+        return boardFuture.thenApply(Board::toDto);
     }
 }
