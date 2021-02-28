@@ -75,7 +75,8 @@ public class InMemoryBoard
                 cells[row][column] = new InMemoryCell(cellDto.getState(),
                         cellDto.isHasMine(),
                         column,
-                        row);
+                        row,
+                        cellDto.getBorderingMines());
                 if (cellDto.getState() == CellState.CLICKED || cellDto.isHasMine()) {
                     pendingCells--;
                 }
@@ -222,7 +223,8 @@ public class InMemoryBoard
                 cells[row][column] = new InMemoryCell(CellState.INITIAL,
                         mines.contains(row * width + column),
                         column,
-                        row);
+                        row,
+                        -1);
             }
         }
     }
@@ -258,16 +260,19 @@ public class InMemoryBoard
         private final boolean hasMine;
         private final int column;
         private final int row;
-        private int borderingMinesCount = -1;
+        private int borderingMinesCount;
+        private List<InMemoryCell> borderingCells;
 
         private InMemoryCell(CellState state,
                              boolean hasMine,
                              int column,
-                             int row) {
+                             int row,
+                             int borderingMinesCount) {
             this.state = state;
             this.hasMine = hasMine;
             this.column = column;
             this.row = row;
+            this.borderingMinesCount = borderingMinesCount;
             updateStatusIfExploded();
         }
 
@@ -302,14 +307,23 @@ public class InMemoryBoard
             changeState(CellState.CLICKED);
             updateStatusIfExploded();
             if (!hasMine) {
-                pendingCells--;
-                if (getBorderingMinesCount() == 0) {
-                    for (Cell borderingCell : getBorderingCells()) {
-                        if (borderingCell.getState() == CellState.INITIAL) {
-                            borderingCell.click();
+                Set<InMemoryCell> cells = new HashSet<>();
+                cells.add(this);
+                while (!cells.isEmpty()) {
+                    pendingCells--;
+                    Iterator<InMemoryCell> i = cells.iterator();
+                    InMemoryCell cell = i.next();
+                    i.remove();
+                    cell.state = CellState.CLICKED;
+                    if (cell.getBorderingMinesCount() == 0) {
+                        for (InMemoryCell borderingCell : cell.getBorderingCells()) {
+                            if (borderingCell.getState() == CellState.INITIAL) {
+                                cells.add(borderingCell);
+                            }
                         }
                     }
                 }
+
                 updateStatusIfSolved();
             }
         }
@@ -342,16 +356,18 @@ public class InMemoryBoard
                     "Current board state is " + boardState + " and must be " + currentBoardState);
         }
 
-        private Iterable<Cell> getBorderingCells() {
-            List<Cell> borderingCells = new ArrayList<>();
-            for (int currentColumn = column - 1; currentColumn <= column + 1; currentColumn++) {
-                for (int currentRow = row - 1; currentRow <= row + 1; currentRow++) {
-                    if (!(currentColumn == column && currentRow == row)
-                            && currentRow >= 0
-                            && currentRow < getHeight()
-                            && currentColumn >= 0
-                            && currentColumn < getWidth()) {
-                        borderingCells.add(cells[currentRow][currentColumn]);
+        private List<InMemoryCell> getBorderingCells() {
+            if (borderingCells == null) {
+                borderingCells = new ArrayList<>();
+                for (int currentColumn = column - 1; currentColumn <= column + 1; currentColumn++) {
+                    for (int currentRow = row - 1; currentRow <= row + 1; currentRow++) {
+                        if (!(currentColumn == column && currentRow == row)
+                                && currentRow >= 0
+                                && currentRow < getHeight()
+                                && currentColumn >= 0
+                                && currentColumn < getWidth()) {
+                            borderingCells.add(cells[currentRow][currentColumn]);
+                        }
                     }
                 }
             }
