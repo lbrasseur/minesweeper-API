@@ -26,9 +26,6 @@ public class InMemoryBoardManagerTests {
     @Mock
     private BoardDao boardDao;
 
-    @Mock
-    private BoardDto boardDto;
-
     private InMemoryBoardManager boardManager;
 
     @BeforeEach
