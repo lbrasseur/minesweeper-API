@@ -4,6 +4,8 @@ import com.minesweeper.business.api.Board;
 import com.minesweeper.business.api.BoardState;
 import com.minesweeper.business.api.Cell;
 import com.minesweeper.business.api.CellState;
+import com.minesweeper.common.api.dto.BoardDto;
+import com.minesweeper.common.api.dto.CellDto;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;
@@ -249,5 +251,118 @@ public class InMemoryBoardTests {
                 "IllegalArgumentException expected"
         );
         assertEquals("Row must be lower than height", thrown.getMessage());
+    }
+
+    @Test
+    void testPauseAndResume() {
+        Board board = new InMemoryBoard("myId",
+                "anOwner",
+                11,
+                7,
+                5);
+
+        board.pause();
+        assertEquals(BoardState.PAUSED, board.getState());
+        board.resume();
+        assertEquals(BoardState.PLAYING, board.getState());
+    }
+
+    @Test
+    void testPauseWhilePaused() {
+        Board board = new InMemoryBoard("myId",
+                "anOwner",
+                11,
+                7,
+                5);
+
+        board.pause();
+
+        Exception thrown = assertThrows(
+                IllegalStateException.class,
+                board::pause,
+                "IllegalStateException expected"
+        );
+        assertEquals("State PAUSED can't change to state PAUSED", thrown.getMessage());
+    }
+
+    @Test
+    void testResumeWhilePlaying() {
+        Board board = new InMemoryBoard("myId",
+                "anOwner",
+                11,
+                7,
+                5);
+
+        Exception thrown = assertThrows(
+                IllegalStateException.class,
+                board::resume,
+                "IllegalStateException expected"
+        );
+        assertEquals("State PLAYING can't change to state PLAYING", thrown.getMessage());
+    }
+
+    @Test
+    void testConversionToDto() {
+        final String id = "myId";
+        final String owner = "anOwner";
+        final int width = 11;
+        final int height = 7;
+        final int mineCount = 5;
+
+        Board board = new InMemoryBoard(id,
+                owner,
+                width,
+                height,
+                mineCount);
+
+        BoardDto dto = board.toDto();
+        assertEquals(id, dto.getId());
+        assertEquals(owner, dto.getOwner());
+        assertEquals(width, dto.getCells()[0].length);
+        assertEquals(height, dto.getCells().length);
+        assertEquals(BoardState.PLAYING, dto.getState());
+
+        int mines = 0;
+        for (CellDto[] row : dto.getCells()) {
+            for (CellDto cellDto : row) {
+                if (cellDto.isHasMine()) {
+                    mines++;
+                }
+            }
+        }
+
+        assertEquals(mineCount, mines);
+    }
+
+    @Test
+    void testConversionFromDto() {
+        final String id = "myId";
+        final String owner = "anOwner";
+        final int width = 11;
+        final int height = 7;
+        final int mineCount = 5;
+        Board board = new InMemoryBoard(new InMemoryBoard(id,
+                owner,
+                width,
+                height,
+                mineCount)
+                .toDto());
+
+        assertEquals(id, board.getId());
+        assertEquals(owner, board.getOwner());
+        assertEquals(width, board.getWidth());
+        assertEquals(height, board.getHeight());
+        assertEquals(BoardState.PLAYING, board.getState());
+
+        int mines = 0;
+        for (int column = 0; column < board.getWidth(); column++) {
+            for (int row = 0; row < board.getHeight(); row++) {
+                Cell cell = board.getCell(column, row);
+                if (cell.hasMine()) {
+                    mines++;
+                }
+            }
+        }
+        assertEquals(mineCount, mines);
     }
 }

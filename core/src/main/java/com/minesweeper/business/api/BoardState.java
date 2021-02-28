@@ -4,32 +4,20 @@ import javax.annotation.Nonnull;
 
 public enum BoardState
         implements StateEnum<BoardState> {
-    PLAYING(1), //0
+    PLAYING(1, 2, 3), //0
     PAUSED(0), //1
-    SOLVED(0), //2
-    EXPLODED(0); //3
+    SOLVED(), //2
+    EXPLODED(); //3
 
-    private int[] allowedSourceStates;
+    private final int[] allowedTargetStates;
 
-    BoardState(int... allowedSourceStates) {
-        this.allowedSourceStates = allowedSourceStates;
+    BoardState(int... allowedTargetStates) {
+        this.allowedTargetStates = allowedTargetStates;
     }
 
     @Nonnull
     @Override
-    public BoardState state() {
-        return this;
-    }
-
-    @Nonnull
-    @Override
-    public BoardState state(int ordinal) {
-        return BoardState.values()[ordinal];
-    }
-
-    @Nonnull
-    @Override
-    public int[] allowedSourceStates() {
-        return allowedSourceStates;
+    public int[] allowedTargetStates() {
+        return allowedTargetStates;
     }
 }

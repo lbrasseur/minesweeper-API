@@ -26,7 +26,7 @@
 * Persistence
 * Define bindings in a separated class (Like Guice or Dagger) instead og using @Component
   * Using Dagger2 + Spark has better startup than Spring, I can try it later.
-* Time tracking
+* Show pending mines count
 
 ## Missign functionality from original game
 * Cell cleaning when clicking 2 buttons at the same time (is there an event for that??) 

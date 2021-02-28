@@ -2,28 +2,24 @@ package com.minesweeper.business.api;
 
 import javax.annotation.Nonnull;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 interface StateEnum<T extends Enum<T>> {
     default void checkTargetState(@Nonnull StateEnum<T> targetState) {
         requireNonNull(targetState);
-        checkArgument(targetState.isAllowedSource(state()),
-                "State " + state() + " can't change to state " + targetState);
+        checkState(isAllowedTarget(targetState),
+                "State " + this + " can't change to state " + targetState);
     }
 
-    @Nonnull
-    T state();
+    int ordinal();
 
     @Nonnull
-    T state(int ordinal);
+    int[] allowedTargetStates();
 
-    @Nonnull
-    int[] allowedSourceStates();
-
-    private boolean isAllowedSource(T sourceState) {
-        for (int allowedState : allowedSourceStates()) {
-            if (sourceState == state(allowedState)) {
+    private boolean isAllowedTarget(StateEnum<T> targetState) {
+        for (int allowedState : allowedTargetStates()) {
+            if (targetState.ordinal() == allowedState) {
                 return true;
             }
         }
