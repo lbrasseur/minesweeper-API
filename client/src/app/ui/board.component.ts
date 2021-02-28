@@ -159,7 +159,10 @@ export class BoardComponent implements OnInit {
   private updateBoard(operation: Observable<BoardDto>) {
     operation.subscribe((dto: BoardDto) => {
       this.boardId = dto.id;
-      this.boardState = dto.state;
+      if (this.boardState != dto.state) {
+        this.boardState = dto.state;
+        this.updateBoardList();
+      }
       this.cells = dto.cells;
       if (this.playingTime == null) {
         this.playingTime = dto.playingTime;
