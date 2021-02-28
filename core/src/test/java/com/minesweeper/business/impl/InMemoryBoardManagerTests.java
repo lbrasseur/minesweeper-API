@@ -45,14 +45,14 @@ public class InMemoryBoardManagerTests {
         // Expectations
         expect(idGenerator.generateId())
                 .andReturn(id);
-        expect(boardDao.saveBoard(isA(BoardDto.class)))
+        expect(boardDao.save(isA(BoardDto.class)))
                 .andReturn(CompletableFuture.completedFuture(null));
 
         replay(idGenerator);
         replay(boardDao);
 
         // Execution
-        Board board = boardManager.createBoard(owner, width, height, mineCount).get();
+        Board board = boardManager.create(owner, width, height, mineCount).get();
 
         // Assertions
         assertEquals(id, board.getId());
@@ -85,19 +85,19 @@ public class InMemoryBoardManagerTests {
         // Expectations
         expect(idGenerator.generateId())
                 .andReturn(id);
-        expect(boardDao.saveBoard(isA(BoardDto.class)))
+        expect(boardDao.save(isA(BoardDto.class)))
                 .andReturn(CompletableFuture.completedFuture(null))
                 .times(2);
-        expect(boardDao.readBoard(id))
+        expect(boardDao.read(id))
                 .andReturn(readFuture);
 
         replay(idGenerator);
         replay(boardDao);
 
         // Execution
-        Board original = boardManager.createBoard("anOwner", 11, 7, 5).get();
+        Board original = boardManager.create("anOwner", 11, 7, 5).get();
         readFuture.complete(original.toDto());
-        Board board = boardManager.pauseBoard(id).get();
+        Board board = boardManager.pause(id).get();
 
         // Assertions
         assertEquals(BoardState.PAUSED, board.getState());
@@ -116,23 +116,23 @@ public class InMemoryBoardManagerTests {
         // Expectations
         expect(idGenerator.generateId())
                 .andReturn(id);
-        expect(boardDao.saveBoard(isA(BoardDto.class)))
+        expect(boardDao.save(isA(BoardDto.class)))
                 .andReturn(CompletableFuture.completedFuture(null))
                 .times(3);
-        expect(boardDao.readBoard(id))
+        expect(boardDao.read(id))
                 .andReturn(readFuture);
-        expect(boardDao.readBoard(id))
+        expect(boardDao.read(id))
                 .andReturn(readFuture2);
 
         replay(idGenerator);
         replay(boardDao);
 
         // Execution
-        Board board1 = boardManager.createBoard("anOwner", 11, 7, 5).get();
+        Board board1 = boardManager.create("anOwner", 11, 7, 5).get();
         readFuture.complete(board1.toDto());
-        Board board2 = boardManager.pauseBoard(id).get();
+        Board board2 = boardManager.pause(id).get();
         readFuture2.complete(board2.toDto());
-        Board board = boardManager.resumeBoard(id).get();
+        Board board = boardManager.resume(id).get();
 
         // Assertions
         assertEquals(BoardState.PLAYING, board.getState());

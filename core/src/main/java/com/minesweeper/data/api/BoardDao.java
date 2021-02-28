@@ -3,12 +3,19 @@ package com.minesweeper.data.api;
 import com.minesweeper.common.api.dto.BoardDto;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public interface BoardDao {
     @Nonnull
-    CompletableFuture<Void> saveBoard(@Nonnull BoardDto board);
+    CompletableFuture<Void> save(@Nonnull BoardDto board);
 
     @Nonnull
-    CompletableFuture<BoardDto> readBoard(@Nonnull String boardId);
+    CompletableFuture<BoardDto> read(@Nonnull String boardId);
+
+    @Nonnull
+    CompletableFuture<List<BoardDto>> find();
+
+    @Nonnull
+    CompletableFuture<Void> delete(@Nonnull String boardId);
 }

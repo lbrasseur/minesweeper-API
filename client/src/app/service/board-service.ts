@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { CreateBoardDto } from './dto/create-board-dto';
 import { CellIdDto } from './dto/cell-id-dto';
 import { BoardIdDto } from './dto/board-id-dto';
+import { BoardDataDto } from './dto/board-data-dto';
 import { BoardDto } from './dto/board-dto';
 import { Observable } from 'rxjs';
 
@@ -13,7 +14,7 @@ export class BoardService {
 
   constructor(private http: HttpClient) { }
 
-  createBoard(dto: CreateBoardDto): Observable<BoardDto> {
+  create(dto: CreateBoardDto): Observable<BoardDto> {
     return this.http.post<BoardDto>("/create", dto);
   }
 
@@ -23,6 +24,14 @@ export class BoardService {
 
   resume(dto: BoardIdDto): Observable<BoardDto> {
     return this.http.post<BoardDto>("/resume", dto);
+  }
+
+  find(): Observable<BoardDataDto[]> {
+    return this.http.get<BoardDataDto[]>("/find");
+  }
+
+  delete(dto: BoardIdDto): Observable<any> {
+    return this.http.post<BoardIdDto>("/delete", dto);
   }
 
   click(dto: CellIdDto): Observable<BoardDto> {

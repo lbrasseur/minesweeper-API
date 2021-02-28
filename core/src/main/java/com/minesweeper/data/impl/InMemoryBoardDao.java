@@ -8,8 +8,10 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
@@ -28,7 +30,7 @@ public class InMemoryBoardDao
     }
 
     @Override
-    public CompletableFuture<Void> saveBoard(@Nonnull BoardDto board) {
+    public CompletableFuture<Void> save(@Nonnull BoardDto board) {
         requireNonNull(board);
 
         storage.put(board.getId(), dtoToString(board));
@@ -37,13 +39,31 @@ public class InMemoryBoardDao
 
     @Nonnull
     @Override
-    public CompletableFuture<BoardDto> readBoard(@Nonnull String boardId) {
+    public CompletableFuture<BoardDto> read(@Nonnull String boardId) {
         requireNonNull(boardId);
 
         String data = storage.get(boardId);
         checkArgument(data != null, "Board with id " + boardId + " not found");
 
         return completedFuture(stringToDto(data));
+    }
+
+    @Nonnull
+    @Override
+    public CompletableFuture<List<BoardDto>> find() {
+        return completedFuture(storage.values()
+                .stream()
+                .map(this::stringToDto)
+                .collect(Collectors.toList()));
+    }
+
+    @Nonnull
+    @Override
+    public CompletableFuture<Void> delete(@Nonnull String boardId) {
+        requireNonNull(boardId);
+
+        storage.remove(boardId);
+        return completedFuture(null);
     }
 
     private String dtoToString(BoardDto board) {

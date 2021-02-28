@@ -27,6 +27,8 @@
 * Define bindings in a separated class (Like Guice or Dagger) instead og using @Component
   * Using Dagger2 + Spark has better startup than Spring, I can try it later.
 * Show pending mines count
+* Service error handling
+* UI: If you click too fast an inconsistent action could be tirggered (but the state is not broken)
 
 ## Missign functionality from original game
 * Cell cleaning when clicking 2 buttons at the same time (is there an event for that??) 

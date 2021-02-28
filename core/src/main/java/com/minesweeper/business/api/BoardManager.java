@@ -1,20 +1,27 @@
 package com.minesweeper.business.api;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public interface BoardManager {
     @Nonnull
-    CompletableFuture<Board> createBoard(@Nonnull String owner,
-                                         int width,
-                                         int height,
-                                         int mines);
+    CompletableFuture<Board> create(@Nonnull String owner,
+                                    int width,
+                                    int height,
+                                    int mines);
 
     @Nonnull
-    CompletableFuture<Board> pauseBoard(@Nonnull String boardId);
+    CompletableFuture<Board> pause(@Nonnull String boardId);
 
     @Nonnull
-    CompletableFuture<Board> resumeBoard(@Nonnull String boardId);
+    CompletableFuture<Board> resume(@Nonnull String boardId);
+
+    @Nonnull
+    CompletableFuture<List<BoardData>> find();
+
+    @Nonnull
+    CompletableFuture<Void> delete(@Nonnull String boardId);
 
     @Nonnull
     CompletableFuture<Board> click(@Nonnull String boardId,

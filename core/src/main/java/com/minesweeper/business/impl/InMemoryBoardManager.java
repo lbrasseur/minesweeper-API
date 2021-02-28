@@ -1,16 +1,16 @@
 package com.minesweeper.business.impl;
 
-import com.minesweeper.business.api.Board;
-import com.minesweeper.business.api.BoardManager;
-import com.minesweeper.business.api.Cell;
-import com.minesweeper.business.api.IdGenerator;
+import com.minesweeper.business.api.*;
 import com.minesweeper.data.api.BoardDao;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import java.time.Instant;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
@@ -29,10 +29,10 @@ public class InMemoryBoardManager
 
     @Nonnull
     @Override
-    public CompletableFuture<Board> createBoard(@Nonnull String owner,
-                                                int width,
-                                                int height,
-                                                int mines) {
+    public CompletableFuture<Board> create(@Nonnull String owner,
+                                           int width,
+                                           int height,
+                                           int mines) {
         requireNonNull(owner);
         return saveBoard(new InMemoryBoard(idGenerator.generateId(),
                 owner,
@@ -43,16 +43,34 @@ public class InMemoryBoardManager
 
     @Nonnull
     @Override
-    public CompletableFuture<Board> pauseBoard(@Nonnull String boardId) {
+    public CompletableFuture<Board> pause(@Nonnull String boardId) {
         requireNonNull(boardId);
         return processBoard(boardId, Board::pause);
     }
 
     @Nonnull
     @Override
-    public CompletableFuture<Board> resumeBoard(@Nonnull String boardId) {
+    public CompletableFuture<Board> resume(@Nonnull String boardId) {
         requireNonNull(boardId);
         return processBoard(boardId, Board::resume);
+    }
+
+    @Nonnull
+    @Override
+    public CompletableFuture<List<BoardData>> find() {
+        return boardDao.find()
+                .thenApply(dtos -> dtos.stream()
+                        .map(dto -> new BoardDataImpl(dto.getId(),
+                                dto.getState(),
+                                Instant.ofEpochSecond(dto.getCreationMoment())))
+                        .collect(Collectors.toList()));
+    }
+
+    @Nonnull
+    @Override
+    public CompletableFuture<Void> delete(@Nonnull String boardId) {
+        requireNonNull(boardId);
+        return boardDao.delete(boardId);
     }
 
     @Nonnull
@@ -86,7 +104,7 @@ public class InMemoryBoardManager
 
     private CompletableFuture<Board> getBoard(@Nonnull String boardId) {
         requireNonNull(boardId);
-        return boardDao.readBoard(boardId)
+        return boardDao.read(boardId)
                 .thenApply(InMemoryBoard::new);
     }
 
@@ -108,7 +126,7 @@ public class InMemoryBoardManager
     }
 
     private CompletableFuture<Board> saveBoard(Board board) {
-        return boardDao.saveBoard(board.toDto())
+        return boardDao.save(board.toDto())
                 .thenApply(dummy -> board);
     }
 }

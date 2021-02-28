@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { BoardManager } from '../business/board-manager';
 import { BoardDto } from '../service/dto/board-dto';
+import { BoardDataDto } from '../service/dto/board-data-dto';
 import { BoardState } from '../service/dto/board-state';
 import { CellDto } from '../service/dto/cell-dto';
 import { CellState } from '../service/dto/cell-state';
 
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 const HOUR_MINUTE_RATIO = 60;
 const MINUTE_SECOND_RATIO = 60;
@@ -22,36 +24,42 @@ export class BoardComponent implements OnInit {
   cells: CellDto[][];
   playingTime: number;
   formattedPlayingTime: string;
+  boards: BoardDataDto[];
 
   constructor(private manager: BoardManager) { }
 
   ngOnInit(): void {
-  setInterval(() => {
+    setInterval(() => {
       if (this.isPlaying() && this.playingTime != null) {
         this.playingTime += SECOND_MILLI_RATIO;
         this.updatePlayingTime();
       }
     }, SECOND_MILLI_RATIO);
+    this.updateBoardList();
   }
 
-  createBoard(width: number,
+  create(width: number,
       height: number,
       mines: number) {
     this.playingTime = null;
-    this.updateBoard(this.manager.createBoard(width, height, mines));
+    this.updateBoard(this.updateListOnFinish(this.manager.create(width, height, mines)));
   }
 
   pause() {
     this.playingTime = null;
-    this.updateBoard(this.manager.pause(this.boardId));
+    this.updateBoard(this.updateListOnFinish(this.manager.pause(this.boardId)));
   }
 
   resume() {
-    this.updateBoard(this.manager.resume(this.boardId));
+    this.resumeBoard(this.boardId);
   }
 
   isPaused() : boolean {
-    return this.boardState == BoardState.PAUSED;
+    return this.isPausedState(this.boardState);
+  }
+
+  isPausedState(state: BoardState) : boolean {
+    return state == BoardState.PAUSED;
   }
 
   isPlaying() : boolean {
@@ -62,6 +70,38 @@ export class BoardComponent implements OnInit {
     return this.boardState == BoardState.PLAYING
       ||  this.boardState == BoardState.SOLVED
       ||  this.boardState == BoardState.EXPLODED;
+  }
+
+  isCurrentBoard(boardId: string) : boolean {
+    return this.boardId == boardId
+      && this.boardState == BoardState.PLAYING;
+  }
+
+  delete(boardId: string) {
+    if (confirm("Are you sure?")) {
+      this.manager.delete(boardId)
+        .subscribe((dto: BoardDto) => {
+          this.updateBoardList();
+        });
+    }
+  }
+
+  switch(boardId: string) {
+    if (this.boardState == BoardState.PLAYING) {
+      this.manager.pause(this.boardId)
+        .subscribe((dummy: BoardDto) => {
+          this.resumeBoard(boardId);
+        });
+    } else {
+     this.resumeBoard(boardId);
+    }
+  }
+
+  updateBoardList() {
+    this.manager.find()
+      .subscribe((boards: BoardDataDto[]) => {
+        this.boards = boards;
+      });
   }
 
   clickCell(cell: CellDto,
@@ -111,6 +151,11 @@ export class BoardComponent implements OnInit {
       : "";
   }
 
+  private resumeBoard(boardId: string) {
+    this.playingTime = null;
+    this.updateBoard(this.updateListOnFinish(this.manager.resume(boardId)));
+  }
+
   private updateBoard(operation: Observable<BoardDto>) {
     operation.subscribe((dto: BoardDto) => {
       this.boardId = dto.id;
@@ -121,6 +166,13 @@ export class BoardComponent implements OnInit {
         this.updatePlayingTime();
       }
     });
+  }
+
+  private updateListOnFinish(operation: Observable<BoardDto>): Observable<BoardDto> {
+    return operation.pipe(map((board: BoardDto) => {
+        this.updateBoardList();
+        return board;
+      }));
   }
 
   private updatePlayingTime() {

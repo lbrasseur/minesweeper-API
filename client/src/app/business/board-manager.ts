@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BoardService } from '../service/board-service';
 import { BoardDto } from '../service/dto/board-dto';
+import { BoardDataDto } from '../service/dto/board-data-dto';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -10,10 +11,10 @@ export class BoardManager {
 
   constructor(private service: BoardService) { }
 
-  createBoard(width: number,
+  create(width: number,
       height: number,
       mines: number): Observable<BoardDto> {
-    return this.service.createBoard({
+    return this.service.create({
       width: width,
       height: height,
       mines: mines
@@ -28,6 +29,16 @@ export class BoardManager {
 
   resume(boardId: string): Observable<BoardDto> {
     return this.service.resume({
+      boardId: boardId
+    });
+  }
+
+  find(): Observable<BoardDataDto[]> {
+     return this.service.find();
+  }
+
+  delete(boardId: string): Observable<any> {
+    return this.service.delete({
       boardId: boardId
     });
   }
