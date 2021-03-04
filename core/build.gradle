@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-sourceCompatibility = '11'
+sourceCompatibility = '8'
 
 dependencies {
     implementation 'javax.inject:javax.inject:1'

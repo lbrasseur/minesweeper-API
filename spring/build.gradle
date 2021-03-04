@@ -2,9 +2,12 @@ plugins {
     id 'org.springframework.boot' version '2.4.3'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
+    id 'com.github.johnrengelman.shadow' version "6.1.0"
 }
 
-sourceCompatibility = '11'
+sourceCompatibility = '8'
+
+task stage(dependsOn: ['clean', 'shadowJar'])
 
 dependencies {
     implementation project(':core')

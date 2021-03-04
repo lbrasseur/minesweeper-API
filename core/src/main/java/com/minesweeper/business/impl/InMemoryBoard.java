@@ -157,7 +157,7 @@ public class InMemoryBoard
                 lastPlayingMoment != null ?
                         lastPlayingMoment.getEpochSecond()
                         : null,
-                TimeUnit.MILLISECONDS.convert(playingTime),
+                TimeUnit.MILLISECONDS.convert(playingTime.getSeconds(), TimeUnit.SECONDS),
                 cellDtos);
     }
 
@@ -167,8 +167,8 @@ public class InMemoryBoard
         sb.append("State: ");
         sb.append(boardState);
         sb.append('\n');
-        String bar = "+" + "-".repeat(getWidth() * 2 - 1) + "+\n";
-        sb.append(bar);
+        //String bar = "+" + "-".repeat(getWidth() * 2 - 1) + "+\n";
+        //sb.append(bar);
         for (int row = 0; row < getHeight(); row++) {
             sb.append('|');
             for (int column = 0; column < getWidth(); column++) {
@@ -197,7 +197,7 @@ public class InMemoryBoard
                 sb.append('|');
             }
             sb.append('\n');
-            sb.append(bar);
+            //sb.append(bar);
         }
         return sb.toString();
     }

@@ -1,0 +1,6 @@
+{
+  "name": "Minesweeper example",
+  "description": "A Minesweeper example.",
+  "image": "heroku/gradle",
+  "addons": [ ]
+}

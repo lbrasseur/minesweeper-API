@@ -17,7 +17,7 @@ interface StateEnum<T extends Enum<T>> {
     @Nonnull
     int[] allowedTargetStates();
 
-    private boolean isAllowedTarget(StateEnum<T> targetState) {
+    default boolean isAllowedTarget(StateEnum<T> targetState) {
         for (int allowedState : allowedTargetStates()) {
             if (targetState.ordinal() == allowedState) {
                 return true;
