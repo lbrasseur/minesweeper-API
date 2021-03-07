@@ -25,7 +25,8 @@ public class KeyValueUserDao
     public KeyValueUserDao(@Nonnull HashManager hashManager) {
         requireNonNull(hashManager);
         storage = new HashMap<>();
-        createTestUser("a", "s", hashManager);
+        createTestUser("admin", "hello", hashManager);
+        createTestUser("cacho", "deicas", hashManager);
     }
 
     @Nonnull

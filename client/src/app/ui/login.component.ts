@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserManager } from '../business/user-manager';
+import { AppComponent } from '../app.component';
 
 @Component({
   selector: 'app-login',
@@ -7,7 +8,8 @@ import { UserManager } from '../business/user-manager';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  constructor(private manager: UserManager) { }
+  constructor(private manager: UserManager,
+    private app: AppComponent) { }
 
   ngOnInit(): void {
   }
@@ -15,7 +17,8 @@ export class LoginComponent implements OnInit {
   login(username: string,
       password: string) {
     this.manager.login(username, password)
-      .subscribe((token: string) => {
+      .subscribe(() => {
+        this.app.authenticated = true;
       });
   }
 }
