@@ -167,8 +167,6 @@ public class InMemoryBoard
         sb.append("State: ");
         sb.append(boardState);
         sb.append('\n');
-        //String bar = "+" + "-".repeat(getWidth() * 2 - 1) + "+\n";
-        //sb.append(bar);
         for (int row = 0; row < getHeight(); row++) {
             sb.append('|');
             for (int column = 0; column < getWidth(); column++) {
@@ -197,7 +195,6 @@ public class InMemoryBoard
                 sb.append('|');
             }
             sb.append('\n');
-            //sb.append(bar);
         }
         return sb.toString();
     }
@@ -307,7 +304,7 @@ public class InMemoryBoard
             changeState(CellState.CLICKED);
             updateStatusIfExploded();
             if (!hasMine) {
-                Set<InMemoryCell> cells = new HashSet<>();
+                Set<InMemoryCell> cells = new HashSet<>(); // Using identity is ok here
                 cells.add(this);
                 while (!cells.isEmpty()) {
                     pendingCells--;

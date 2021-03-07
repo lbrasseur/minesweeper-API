@@ -14,7 +14,7 @@ public class RandomIdGeneratorTests {
 
     @BeforeEach
     void beforeEach() {
-        idGenerator = new RandomIdGenerator();
+        idGenerator = new RandomIdGenerator(new Sha256HashManager());
     }
 
     @Test
