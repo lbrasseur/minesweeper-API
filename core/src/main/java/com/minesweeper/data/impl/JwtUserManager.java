@@ -3,6 +3,7 @@ package com.minesweeper.data.impl;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.minesweeper.business.api.HashManager;
 import com.minesweeper.business.api.UserManager;
@@ -49,15 +50,23 @@ public class JwtUserManager
 
     @Nonnull
     @Override
-    public String getUser(@Nonnull String token) {
+    public String getUser(@Nonnull String token) throws IllegalArgumentException {
+        requireNonNull(token);
+        try {
+            return decode(token).getSubject();
+        } catch (JWTVerificationException e) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private DecodedJWT decode(String token) {
         requireNonNull(token);
 
         JWTVerifier verifier = JWT.require(algorithm())
                 .withIssuer(ISSUER)
                 .build();
 
-        DecodedJWT jwt = verifier.verify(token);
-        return jwt.getSubject();
+        return verifier.verify(token);
     }
 
     private Algorithm algorithm() {

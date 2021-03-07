@@ -11,6 +11,9 @@ public interface UserManager {
     CompletableFuture<String> login(@Nonnull String username,
                                     @Nonnull String password);
 
+    /**
+     * @throws IllegalArgumentException if the token is not valid
+     */
     @Nonnull
-    String getUser(@Nonnull String token);
+    String getUser(@Nonnull String token) throws IllegalArgumentException;
 }

@@ -43,22 +43,28 @@ public class InMemoryBoardManager
 
     @Nonnull
     @Override
-    public CompletableFuture<Board> pause(@Nonnull String boardId) {
+    public CompletableFuture<Board> pause(@Nonnull String owner,
+                                          @Nonnull String boardId) {
+        requireNonNull(owner);
         requireNonNull(boardId);
-        return processBoard(boardId, Board::pause);
+        return processBoard(owner, boardId, Board::pause);
     }
 
     @Nonnull
     @Override
-    public CompletableFuture<Board> resume(@Nonnull String boardId) {
+    public CompletableFuture<Board> resume(@Nonnull String owner,
+                                           @Nonnull String boardId) {
+        requireNonNull(owner);
         requireNonNull(boardId);
-        return processBoard(boardId, Board::resume);
+        return processBoard(owner, boardId, Board::resume);
     }
 
     @Nonnull
     @Override
-    public CompletableFuture<List<BoardData>> find() {
-        return boardDao.find()
+    public CompletableFuture<List<BoardData>> find(@Nonnull String owner) {
+        requireNonNull(owner);
+
+        return boardDao.find(owner)
                 .thenApply(dtos -> dtos.stream()
                         .map(dto -> new BoardDataImpl(dto.getId(),
                                 dto.getState(),
@@ -68,57 +74,98 @@ public class InMemoryBoardManager
 
     @Nonnull
     @Override
-    public CompletableFuture<Void> delete(@Nonnull String boardId) {
+    public CompletableFuture<Void> delete(@Nonnull String owner,
+                                          @Nonnull String boardId) {
+        requireNonNull(owner);
         requireNonNull(boardId);
-        return boardDao.delete(boardId);
+
+        return boardDao.delete(owner, boardId);
     }
 
     @Nonnull
     @Override
-    public CompletableFuture<Board> click(@Nonnull String boardId,
+    public CompletableFuture<Board> click(@Nonnull String owner,
+                                          @Nonnull String boardId,
                                           int column,
                                           int row) {
+        requireNonNull(owner);
         requireNonNull(boardId);
-        return processCell(boardId, column, row, Cell::click);
+
+        return processCell(owner,
+                boardId,
+                column,
+                row,
+                Cell::click);
     }
 
     @Nonnull
     @Override
-    public CompletableFuture<Board> redFlag(@Nonnull String boardId,
+    public CompletableFuture<Board> redFlag(@Nonnull String owner,
+                                            @Nonnull String boardId,
                                             int column,
                                             int row) {
-        return processCell(boardId, column, row, Cell::redFlag);
-    }
-
-    @Nonnull
-    @Override
-    public CompletableFuture<Board> questionMark(@Nonnull String boardId, int column, int row) {
-        return processCell(boardId, column, row, Cell::questionMark);
-    }
-
-    @Nonnull
-    @Override
-    public CompletableFuture<Board> initial(@Nonnull String boardId, int column, int row) {
-        return processCell(boardId, column, row, Cell::initial);
-    }
-
-    private CompletableFuture<Board> getBoard(@Nonnull String boardId) {
+        requireNonNull(owner);
         requireNonNull(boardId);
-        return boardDao.read(boardId)
+
+        return processCell(owner,
+                boardId,
+                column,
+                row,
+                Cell::redFlag);
+    }
+
+    @Nonnull
+    @Override
+    public CompletableFuture<Board> questionMark(@Nonnull String owner,
+                                                 @Nonnull String boardId,
+                                                 int column,
+                                                 int row) {
+        requireNonNull(owner);
+        requireNonNull(boardId);
+
+        return processCell(owner,
+                boardId,
+                column,
+                row,
+                Cell::questionMark);
+    }
+
+    @Nonnull
+    @Override
+    public CompletableFuture<Board> initial(@Nonnull String owner,
+                                            @Nonnull String boardId,
+                                            int column,
+                                            int row) {
+        requireNonNull(owner);
+        requireNonNull(boardId);
+
+        return processCell(owner,
+                boardId,
+                column,
+                row,
+                Cell::initial);
+    }
+
+    private CompletableFuture<Board> getBoard(@Nonnull String owner,
+                                              @Nonnull String boardId) {
+        return boardDao.read(owner, boardId)
                 .thenApply(InMemoryBoard::new);
     }
 
-    private CompletableFuture<Board> processCell(String boardId,
+    private CompletableFuture<Board> processCell(String owner,
+                                                 String boardId,
                                                  int column,
                                                  int row,
                                                  Consumer<Cell> cellConsumer) {
-        return processBoard(boardId,
+        return processBoard(owner,
+                boardId,
                 board -> cellConsumer.accept(board.getCell(column, row)));
     }
 
-    private CompletableFuture<Board> processBoard(String boardId,
+    private CompletableFuture<Board> processBoard(String owner,
+                                                  String boardId,
                                                   Consumer<Board> boardConsumerConsumer) {
-        return getBoard(boardId)
+        return getBoard(owner, boardId)
                 .thenCompose(board -> {
                     boardConsumerConsumer.accept(board);
                     return saveBoard(board);

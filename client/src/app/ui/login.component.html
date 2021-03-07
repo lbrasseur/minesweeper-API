@@ -1,0 +1,14 @@
+<table class="main">
+  <tr>
+    <td>Username:</td>
+    <td><input #username/></td>
+  </tr>
+  <tr>
+    <td>Password:</td>
+    <td><input #password type="password"/></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><button (click)="login(username.value, password.value);">Login</button></td>
+  </tr>
+</table>

@@ -88,7 +88,7 @@ public class InMemoryBoardManagerTests {
         expect(boardDao.save(isA(BoardDto.class)))
                 .andReturn(CompletableFuture.completedFuture(null))
                 .times(2);
-        expect(boardDao.read(id))
+        expect(boardDao.read("anOwner", id))
                 .andReturn(readFuture);
 
         replay(idGenerator);
@@ -97,7 +97,7 @@ public class InMemoryBoardManagerTests {
         // Execution
         Board original = boardManager.create("anOwner", 11, 7, 5).get();
         readFuture.complete(original.toDto());
-        Board board = boardManager.pause(id).get();
+        Board board = boardManager.pause("anOwner", id).get();
 
         // Assertions
         assertEquals(BoardState.PAUSED, board.getState());
@@ -119,9 +119,9 @@ public class InMemoryBoardManagerTests {
         expect(boardDao.save(isA(BoardDto.class)))
                 .andReturn(CompletableFuture.completedFuture(null))
                 .times(3);
-        expect(boardDao.read(id))
+        expect(boardDao.read("anOwner", id))
                 .andReturn(readFuture);
-        expect(boardDao.read(id))
+        expect(boardDao.read("anOwner", id))
                 .andReturn(readFuture2);
 
         replay(idGenerator);
@@ -130,9 +130,9 @@ public class InMemoryBoardManagerTests {
         // Execution
         Board board1 = boardManager.create("anOwner", 11, 7, 5).get();
         readFuture.complete(board1.toDto());
-        Board board2 = boardManager.pause(id).get();
+        Board board2 = boardManager.pause("anOwner", id).get();
         readFuture2.complete(board2.toDto());
-        Board board = boardManager.resume(id).get();
+        Board board = boardManager.resume("anOwner", id).get();
 
         // Assertions
         assertEquals(BoardState.PLAYING, board.getState());

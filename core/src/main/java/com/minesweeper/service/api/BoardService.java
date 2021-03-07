@@ -4,6 +4,7 @@ import com.minesweeper.common.api.dto.BoardDto;
 import com.minesweeper.service.api.dto.*;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -14,29 +15,37 @@ import java.util.concurrent.CompletableFuture;
  */
 public interface BoardService {
     @Nonnull
-    CompletableFuture<ResultDto<BoardDto>> create(@Nonnull CreateBoardDto dto);
+    CompletableFuture<ResultDto<BoardDto>> create(@Nonnull CreateBoardDto dto,
+                                                  @Nullable String authorization);
 
     @Nonnull
-    CompletableFuture<ResultDto<BoardDto>> pause(@Nonnull BoardIdDto dto);
+    CompletableFuture<ResultDto<BoardDto>> pause(@Nonnull BoardIdDto dto,
+                                                 @Nullable String authorization);
 
     @Nonnull
-    CompletableFuture<ResultDto<BoardDto>> resume(@Nonnull BoardIdDto dto);
+    CompletableFuture<ResultDto<BoardDto>> resume(@Nonnull BoardIdDto dto,
+                                                  @Nullable String authorization);
 
     @Nonnull
-    CompletableFuture<ResultDto<List<BoardDataDto>>> find();
+    CompletableFuture<ResultDto<List<BoardDataDto>>> find(@Nullable String authorization);
 
     @Nonnull
-    CompletableFuture<ResultDto<Void>> delete(@Nonnull BoardIdDto dto);
+    CompletableFuture<ResultDto<Void>> delete(@Nonnull BoardIdDto dto,
+                                              @Nullable String authorization);
 
     @Nonnull
-    CompletableFuture<ResultDto<BoardDto>> click(@Nonnull CellIdDto dto);
+    CompletableFuture<ResultDto<BoardDto>> click(@Nonnull CellIdDto dto,
+                                                 @Nullable String authorization);
 
     @Nonnull
-    CompletableFuture<ResultDto<BoardDto>> redFlag(@Nonnull CellIdDto dto);
+    CompletableFuture<ResultDto<BoardDto>> redFlag(@Nonnull CellIdDto dto,
+                                                   @Nullable String authorization);
 
     @Nonnull
-    CompletableFuture<ResultDto<BoardDto>> questionMark(@Nonnull CellIdDto dto);
+    CompletableFuture<ResultDto<BoardDto>> questionMark(@Nonnull CellIdDto dto,
+                                                        @Nullable String authorization);
 
     @Nonnull
-    CompletableFuture<ResultDto<BoardDto>> initial(@Nonnull CellIdDto dto);
+    CompletableFuture<ResultDto<BoardDto>> initial(@Nonnull CellIdDto dto,
+                                                   @Nullable String authorization);
 }

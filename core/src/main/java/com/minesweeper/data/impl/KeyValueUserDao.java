@@ -13,15 +13,16 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
-import static java.util.concurrent.CompletableFuture.completedFuture;
+import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 @Component
-public class InMemoryUserDao
+public class KeyValueUserDao
         implements UserDao {
+    private static final String TABLE = "User";
     private final Map<String, UserDto> storage;
 
     @Inject
-    public InMemoryUserDao(@Nonnull HashManager hashManager) {
+    public KeyValueUserDao(@Nonnull HashManager hashManager) {
         requireNonNull(hashManager);
         storage = new HashMap<>();
         createTestUser("a", "s", hashManager);
@@ -31,11 +32,12 @@ public class InMemoryUserDao
     @Override
     public CompletableFuture<UserDto> read(@Nonnull String username) {
         requireNonNull(username);
+        return supplyAsync(() -> {
+            UserDto userDto = storage.get(username);
+            checkArgument(userDto != null, "User " + username + " not found");
 
-        UserDto userDto = storage.get(username);
-        checkArgument(userDto != null, "User " + username + " not found");
-
-        return completedFuture(userDto);
+            return userDto;
+        });
     }
 
     private void createTestUser(String username,

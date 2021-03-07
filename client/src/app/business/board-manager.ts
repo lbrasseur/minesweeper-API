@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BoardService } from '../service/board-service';
-import { ResultDto } from '../service/dto/result-dto';
 import { BoardDto } from '../service/dto/board-dto';
 import { BoardDataDto } from '../service/dto/board-data-dto';
+import { extractPayload } from './manager-utils';
 
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +16,7 @@ export class BoardManager {
   create(width: number,
       height: number,
       mines: number): Observable<BoardDto> {
-    return this.extractPayload(this.service.create({
+    return extractPayload(this.service.create({
       width: width,
       height: height,
       mines: mines
@@ -25,23 +24,23 @@ export class BoardManager {
   }
 
   pause(boardId: string): Observable<BoardDto> {
-    return this.extractPayload(this.service.pause({
+    return extractPayload(this.service.pause({
       boardId: boardId
     }));
   }
 
   resume(boardId: string): Observable<BoardDto> {
-    return this.extractPayload(this.service.resume({
+    return extractPayload(this.service.resume({
       boardId: boardId
     }));
   }
 
   find(): Observable<BoardDataDto[]> {
-     return this.extractPayload(this.service.find());
+     return extractPayload(this.service.find());
   }
 
   delete(boardId: string): Observable<any> {
-    return this.extractPayload(this.service.delete({
+    return extractPayload(this.service.delete({
       boardId: boardId
     }));
   }
@@ -49,7 +48,7 @@ export class BoardManager {
   click(boardId: string,
       column: number,
       row: number): Observable<BoardDto> {
-    return this.extractPayload(this.service.click({
+    return extractPayload(this.service.click({
       boardId: boardId,
       column: column,
       row: row
@@ -59,7 +58,7 @@ export class BoardManager {
   redFlag(boardId: string,
       column: number,
       row: number): Observable<BoardDto> {
-    return this.extractPayload(this.service.redFlag({
+    return extractPayload(this.service.redFlag({
       boardId: boardId,
       column: column,
       row: row
@@ -69,7 +68,7 @@ export class BoardManager {
   questionMark(boardId: string,
       column: number,
       row: number): Observable<BoardDto> {
-    return this.extractPayload(this.service.questionMark({
+    return extractPayload(this.service.questionMark({
       boardId: boardId,
       column: column,
       row: row
@@ -79,21 +78,10 @@ export class BoardManager {
   initial(boardId: string,
       column: number,
       row: number): Observable<BoardDto> {
-    return this.extractPayload(this.service.initial({
+    return extractPayload(this.service.initial({
       boardId: boardId,
       column: column,
       row: row
-    }));
-  }
-
-  private  extractPayload<T>(operation: Observable<ResultDto<T>>): Observable<T> {
-    return operation.pipe(map(result => {
-      if (result.error != null) {
-        alert(result.error); // TODO: implement nicer error reporting
-        throw result.error;
-      } else {
-        return result.payload;
-      }
     }));
   }
 }

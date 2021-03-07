@@ -11,11 +11,13 @@ public interface BoardDao {
     CompletableFuture<Void> save(@Nonnull BoardDto board);
 
     @Nonnull
-    CompletableFuture<BoardDto> read(@Nonnull String boardId);
+    CompletableFuture<BoardDto> read(@Nonnull String owner,
+                                     @Nonnull String boardId);
 
     @Nonnull
-    CompletableFuture<List<BoardDto>> find();
+    CompletableFuture<List<BoardDto>> find(@Nonnull String owner);
 
     @Nonnull
-    CompletableFuture<Void> delete(@Nonnull String boardId);
+    CompletableFuture<Void> delete(@Nonnull String owner,
+                                   @Nonnull String boardId);
 }

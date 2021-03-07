@@ -12,34 +12,41 @@ public interface BoardManager {
                                     int mines);
 
     @Nonnull
-    CompletableFuture<Board> pause(@Nonnull String boardId);
+    CompletableFuture<Board> pause(@Nonnull String owner,
+                                   @Nonnull String boardId);
 
     @Nonnull
-    CompletableFuture<Board> resume(@Nonnull String boardId);
+    CompletableFuture<Board> resume(@Nonnull String owner,
+                                    @Nonnull String boardId);
 
     @Nonnull
-    CompletableFuture<List<BoardData>> find();
+    CompletableFuture<List<BoardData>> find(@Nonnull String owner);
 
     @Nonnull
-    CompletableFuture<Void> delete(@Nonnull String boardId);
+    CompletableFuture<Void> delete(@Nonnull String owner,
+                                   @Nonnull String boardId);
 
     @Nonnull
-    CompletableFuture<Board> click(@Nonnull String boardId,
+    CompletableFuture<Board> click(@Nonnull String owner,
+                                   @Nonnull String boardId,
                                    int column,
                                    int row);
 
     @Nonnull
-    CompletableFuture<Board> redFlag(@Nonnull String boardId,
+    CompletableFuture<Board> redFlag(@Nonnull String owner,
+                                     @Nonnull String boardId,
                                      int column,
                                      int row);
 
     @Nonnull
-    CompletableFuture<Board> questionMark(@Nonnull String boardId,
+    CompletableFuture<Board> questionMark(@Nonnull String owner,
+                                          @Nonnull String boardId,
                                           int column,
                                           int row);
 
     @Nonnull
-    CompletableFuture<Board> initial(@Nonnull String boardId,
+    CompletableFuture<Board> initial(@Nonnull String owner,
+                                     @Nonnull String boardId,
                                      int column,
                                      int row);
 }
