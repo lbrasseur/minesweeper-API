@@ -22,10 +22,9 @@
 
 ## TODO
 * Persistence (current implementations uses a in-memory key-value storage).
-* Complete code coverage adding more unit tests.
+* Complete code coverage by adding more unit tests.
 * Define bindings in a separated class (Like Guice or Dagger) instead og using @Component
   * Using Dagger2 + Spark has better startup than Spring.
-* Service error handling
 * UI: If you click too fast an inconsistent action could be triggered (but the state is not broken)
 
 ## Missing functionality from original game
