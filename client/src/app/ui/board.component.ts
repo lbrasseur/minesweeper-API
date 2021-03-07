@@ -107,7 +107,7 @@ export class BoardComponent implements OnInit {
   clickCell(cell: CellDto,
       column: number,
       row: number) {
-    if (cell.state == CellState.INITIAL) {
+    if (this.isPlaying() && cell.state == CellState.INITIAL) {
       this.updateBoard(this.manager.click(this.boardId, column, row));
     }
   }
@@ -115,16 +115,18 @@ export class BoardComponent implements OnInit {
   rightClick(cell: CellDto,
       column: number,
       row: number) {
-    switch (cell.state) {
-      case CellState.INITIAL:
-        this.updateBoard(this.manager.redFlag(this.boardId, column, row));
-        break;
-      case CellState.RED_FLAG:
-        this.updateBoard(this.manager.questionMark(this.boardId, column, row));
-        break;
-      case CellState.QUESTION_MARK:
-        this.updateBoard(this.manager.initial(this.boardId, column, row));
-        break;
+    if (this.isPlaying()) {
+      switch (cell.state) {
+        case CellState.INITIAL:
+          this.updateBoard(this.manager.redFlag(this.boardId, column, row));
+          break;
+        case CellState.RED_FLAG:
+          this.updateBoard(this.manager.questionMark(this.boardId, column, row));
+          break;
+        case CellState.QUESTION_MARK:
+          this.updateBoard(this.manager.initial(this.boardId, column, row));
+          break;
+      }
     }
   }
 
