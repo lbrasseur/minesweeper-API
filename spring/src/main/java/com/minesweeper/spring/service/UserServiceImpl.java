@@ -3,6 +3,7 @@ package com.minesweeper.spring.service;
 import com.minesweeper.business.api.UserManager;
 import com.minesweeper.common.api.dto.UserDto;
 import com.minesweeper.service.api.UserService;
+import com.minesweeper.service.api.dto.ResultDto;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,9 +27,10 @@ public class UserServiceImpl
     @Nonnull
     @Override
     @PostMapping("/login")
-    public CompletableFuture<String> create(@RequestBody @Nonnull UserDto dto) {
+    public CompletableFuture<ResultDto<String>> create(@RequestBody @Nonnull UserDto dto) {
         requireNonNull(dto);
-        return userManager.login(dto.getUsername(),
-                dto.getPassword());
+        return userManager.login(dto.getUsername(), dto.getPassword())
+                .thenApply(ResultDto::fromPayload)
+                .exceptionally(ignored -> ResultDto.fromError("Authentication error")); // Hiding exception cause
     }
 }

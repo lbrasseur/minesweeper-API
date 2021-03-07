@@ -1,10 +1,7 @@
 package com.minesweeper.service.api;
 
 import com.minesweeper.common.api.dto.BoardDto;
-import com.minesweeper.service.api.dto.BoardDataDto;
-import com.minesweeper.service.api.dto.BoardIdDto;
-import com.minesweeper.service.api.dto.CellIdDto;
-import com.minesweeper.service.api.dto.CreateBoardDto;
+import com.minesweeper.service.api.dto.*;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -17,29 +14,29 @@ import java.util.concurrent.CompletableFuture;
  */
 public interface BoardService {
     @Nonnull
-    CompletableFuture<BoardDto> create(@Nonnull CreateBoardDto dto);
+    CompletableFuture<ResultDto<BoardDto>> create(@Nonnull CreateBoardDto dto);
 
     @Nonnull
-    CompletableFuture<BoardDto> pause(@Nonnull BoardIdDto dto);
+    CompletableFuture<ResultDto<BoardDto>> pause(@Nonnull BoardIdDto dto);
 
     @Nonnull
-    CompletableFuture<BoardDto> resume(@Nonnull BoardIdDto dto);
+    CompletableFuture<ResultDto<BoardDto>> resume(@Nonnull BoardIdDto dto);
 
     @Nonnull
-    CompletableFuture<List<BoardDataDto>> find();
+    CompletableFuture<ResultDto<List<BoardDataDto>>> find();
 
     @Nonnull
-    CompletableFuture<Void> delete(@Nonnull BoardIdDto dto);
+    CompletableFuture<ResultDto<Void>> delete(@Nonnull BoardIdDto dto);
 
     @Nonnull
-    CompletableFuture<BoardDto> click(@Nonnull CellIdDto dto);
+    CompletableFuture<ResultDto<BoardDto>> click(@Nonnull CellIdDto dto);
 
     @Nonnull
-    CompletableFuture<BoardDto> redFlag(@Nonnull CellIdDto dto);
+    CompletableFuture<ResultDto<BoardDto>> redFlag(@Nonnull CellIdDto dto);
 
     @Nonnull
-    CompletableFuture<BoardDto> questionMark(@Nonnull CellIdDto dto);
+    CompletableFuture<ResultDto<BoardDto>> questionMark(@Nonnull CellIdDto dto);
 
     @Nonnull
-    CompletableFuture<BoardDto> initial(@Nonnull CellIdDto dto);
+    CompletableFuture<ResultDto<BoardDto>> initial(@Nonnull CellIdDto dto);
 }

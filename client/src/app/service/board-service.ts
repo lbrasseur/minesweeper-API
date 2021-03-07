@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CreateBoardDto } from './dto/create-board-dto';
+import { ResultDto } from './dto/result-dto';
 import { CellIdDto } from './dto/cell-id-dto';
 import { BoardIdDto } from './dto/board-id-dto';
 import { BoardDataDto } from './dto/board-data-dto';
@@ -14,39 +15,39 @@ export class BoardService {
 
   constructor(private http: HttpClient) { }
 
-  create(dto: CreateBoardDto): Observable<BoardDto> {
-    return this.http.post<BoardDto>("/create", dto);
+  create(dto: CreateBoardDto): Observable<ResultDto<BoardDto>> {
+    return this.http.post<ResultDto<BoardDto>>("/create", dto);
   }
 
-  pause(dto: BoardIdDto): Observable<BoardDto> {
-    return this.http.post<BoardDto>("/pause", dto);
+  pause(dto: BoardIdDto): Observable<ResultDto<BoardDto>> {
+    return this.http.post<ResultDto<BoardDto>>("/pause", dto);
   }
 
-  resume(dto: BoardIdDto): Observable<BoardDto> {
-    return this.http.post<BoardDto>("/resume", dto);
+  resume(dto: BoardIdDto): Observable<ResultDto<BoardDto>> {
+    return this.http.post<ResultDto<BoardDto>>("/resume", dto);
   }
 
-  find(): Observable<BoardDataDto[]> {
-    return this.http.get<BoardDataDto[]>("/find");
+  find(): Observable<ResultDto<BoardDataDto[]>> {
+    return this.http.get<ResultDto<BoardDataDto[]>>("/find");
   }
 
-  delete(dto: BoardIdDto): Observable<any> {
-    return this.http.post<BoardIdDto>("/delete", dto);
+  delete(dto: BoardIdDto): Observable<ResultDto<any>> {
+    return this.http.post<ResultDto<any>>("/delete", dto);
   }
 
-  click(dto: CellIdDto): Observable<BoardDto> {
-    return this.http.post<BoardDto>("/click", dto);
+  click(dto: CellIdDto): Observable<ResultDto<BoardDto>> {
+    return this.http.post<ResultDto<BoardDto>>("/click", dto);
   }
 
-  redFlag(dto: CellIdDto): Observable<BoardDto> {
-    return this.http.post<BoardDto>("/redFlag", dto);
+  redFlag(dto: CellIdDto): Observable<ResultDto<BoardDto>> {
+    return this.http.post<ResultDto<BoardDto>>("/redFlag", dto);
   }
 
-  questionMark(dto: CellIdDto): Observable<BoardDto> {
-    return this.http.post<BoardDto>("/questionMark", dto);
+  questionMark(dto: CellIdDto): Observable<ResultDto<BoardDto>> {
+    return this.http.post<ResultDto<BoardDto>>("/questionMark", dto);
   }
 
-  initial(dto: CellIdDto): Observable<BoardDto> {
-    return this.http.post<BoardDto>("/initial", dto);
+  initial(dto: CellIdDto): Observable<ResultDto<BoardDto>> {
+    return this.http.post<ResultDto<BoardDto>>("/initial", dto);
   }
 }
